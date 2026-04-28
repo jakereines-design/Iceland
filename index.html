@@ -125,11 +125,6 @@ body {
   -webkit-appearance: none;
 }
 .currency-input:focus { border-color: #007aff; }
-.currency-result {
-  font-size: 28px;
-  font-weight: 700;
-  color: #007aff;
-}
 .currency-rate {
   font-size: 11px;
   color: #444;
@@ -317,19 +312,19 @@ body {
   <div class="currency-card">
     <div class="currency-row">
       <div class="currency-flag-label">🇮🇸 ISK</div>
-      <input class="currency-input" type="number" id="isk-input" placeholder="1000" inputmode="numeric" oninput="convertISK()">
+      <input class="currency-input" type="number" id="isk-input" placeholder="1000" inputmode="decimal" oninput="convertFromISK()">
     </div>
     <div class="currency-divider"></div>
     <div class="currency-row">
       <div class="currency-flag-label">🇺🇸 USD</div>
-      <div class="currency-result" id="usd-result">—</div>
+      <input class="currency-input" type="number" id="usd-input" placeholder="10" inputmode="decimal" oninput="convertFromUSD()">
     </div>
     <div class="currency-presets">
       <div class="currency-preset" onclick="setISK(1000)">1K ISK</div>
       <div class="currency-preset" onclick="setISK(5000)">5K ISK</div>
       <div class="currency-preset" onclick="setISK(10000)">10K ISK</div>
       <div class="currency-preset" onclick="setISK(50000)">50K ISK</div>
-      <div class="currency-preset clear-btn" onclick="clearISK()">✕ Clear</div>
+      <div class="currency-preset clear-btn" onclick="clearAll()">✕ Clear</div>
     </div>
     <div class="currency-rate" id="rate-label">Loading rate…</div>
   </div>
@@ -472,22 +467,28 @@ fetch('https://open.er-api.com/v6/latest/USD')
     document.getElementById('rate-label').textContent = '1 USD ≈ 137 ISK (fallback rate)';
   });
 
-function convertISK() {
+function convertFromISK() {
   var isk = parseFloat(document.getElementById('isk-input').value);
-  var el = document.getElementById('usd-result');
-  if (!isk || isNaN(isk)) { el.textContent = '—'; return; }
-  var usd = isk / iskRate;
-  el.textContent = '$' + usd.toFixed(2);
+  var usdEl = document.getElementById('usd-input');
+  if (!isk || isNaN(isk)) { usdEl.value = ''; return; }
+  usdEl.value = (isk / iskRate).toFixed(2);
+}
+
+function convertFromUSD() {
+  var usd = parseFloat(document.getElementById('usd-input').value);
+  var iskEl = document.getElementById('isk-input');
+  if (!usd || isNaN(usd)) { iskEl.value = ''; return; }
+  iskEl.value = Math.round(usd * iskRate);
 }
 
 function setISK(val) {
   document.getElementById('isk-input').value = val;
-  convertISK();
+  convertFromISK();
 }
 
-function clearISK() {
+function clearAll() {
   document.getElementById('isk-input').value = '';
-  document.getElementById('usd-result').textContent = '—';
+  document.getElementById('usd-input').value = '';
 }
 </script>
 
