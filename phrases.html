@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0f0f0f">
+<title>Phrases — Iceland 2026</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+body {
+  background: #0f0f0f;
+  color: #f0f0f0;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', sans-serif;
+  min-height: 100vh;
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: calc(env(safe-area-inset-bottom) + 32px);
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+/* ── Topbar ── */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(15,15,15,0.88);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid #1e1e1e;
+  padding: 12px 16px 0;
+  padding-top: max(12px, env(safe-area-inset-top));
+}
+.topbar-row1 {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+.topbar-back {
+  font-size: 15px;
+  color: #007aff;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+.topbar-title {
+  font-size: 17px;
+  font-weight: 600;
+  color: #f0f0f0;
+  flex: 1;
+  text-align: center;
+}
+.topbar-spacer { width: 40px; flex-shrink: 0; }
+
+/* ── Search ── */
+.search-wrap {
+  position: relative;
+  margin-bottom: 10px;
+}
+.search-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 14px;
+  color: #555;
+  pointer-events: none;
+}
+.search-input {
+  width: 100%;
+  background: #1a1a1a;
+  border: 1px solid #2a2a2a;
+  border-radius: 12px;
+  color: #f0f0f0;
+  font-size: 15px;
+  font-family: inherit;
+  padding: 10px 12px 10px 34px;
+  outline: none;
+  -webkit-appearance: none;
+}
+.search-input::placeholder { color: #444; }
+.search-input:focus { border-color: #007aff; }
+
+/* ── Filter pills ── */
+.filters {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 0 0 12px;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.filters::-webkit-scrollbar { display: none; }
+.filter-pill {
+  flex-shrink: 0;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 6px 14px;
+  border-radius: 20px;
+  border: 1px solid #2a2a2a;
+  background: #1a1a1a;
+  color: #888;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+  -webkit-tap-highlight-color: transparent;
+}
+.filter-pill.active {
+  background: #007aff;
+  border-color: #007aff;
+  color: #fff;
+}
+.filter-pill:active { opacity: 0.7; }
+
+/* ── Phrase list ── */
+.phrase-list {
+  padding: 12px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.phrase-card {
+  background: #1a1a1a;
+  border: 1px solid #2a2a2a;
+  border-radius: 14px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: background 0.1s;
+}
+.phrase-card:active { background: #222; }
+
+.phrase-main {
+  display: flex;
+  align-items: center;
+  padding: 14px 16px;
+  gap: 12px;
+}
+.phrase-emoji { font-size: 18px; flex-shrink: 0; width: 26px; text-align: center; }
+.phrase-texts { flex: 1; min-width: 0; }
+.phrase-english {
+  font-size: 13px;
+  color: #666;
+  margin-bottom: 3px;
+}
+.phrase-icelandic {
+  font-size: 15px;
+  font-weight: 600;
+  color: #f0f0f0;
+  margin-bottom: 2px;
+}
+.phrase-roman {
+  font-size: 13px;
+  color: #007aff;
+  font-style: italic;
+}
+.phrase-chevron {
+  font-size: 13px;
+  color: #333;
+  transition: transform 0.2s;
+  flex-shrink: 0;
+}
+.phrase-card.open .phrase-chevron { transform: rotate(90deg); }
+
+.phrase-detail {
+  display: none;
+  background: #111;
+  border-top: 1px solid #222;
+  padding: 10px 16px 14px 54px;
+}
+.phrase-card.open .phrase-detail { display: block; }
+.phrase-note {
+  font-size: 12px;
+  color: #666;
+  line-height: 1.5;
+}
+
+/* ── Empty state ── */
+.empty-state {
+  text-align: center;
+  padding: 48px 20px;
+  color: #444;
+  font-size: 15px;
+}
+.empty-state-icon { font-size: 32px; margin-bottom: 10px; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-row1">
+    <a class="topbar-back" href="index.html">← Home</a>
+    <div class="topbar-title">Phrases</div>
+    <div class="topbar-spacer"></div>
+  </div>
+  <div class="search-wrap">
+    <span class="search-icon">🔍</span>
+    <input class="search-input" type="search" id="search" placeholder="Search phrases…" oninput="filterPhrases()" autocomplete="off">
+  </div>
+  <div class="filters" id="filters">
+    <div class="filter-pill active" onclick="setFilter('all', this)">All</div>
+    <div class="filter-pill" onclick="setFilter('basics', this)">Basics</div>
+    <div class="filter-pill" onclick="setFilter('restaurant', this)">Restaurant</div>
+    <div class="filter-pill" onclick="setFilter('shopping', this)">Shopping</div>
+    <div class="filter-pill" onclick="setFilter('transport', this)">Transport</div>
+    <div class="filter-pill" onclick="setFilter('emergency', this)">Emergency</div>
+    <div class="filter-pill" onclick="setFilter('numbers', this)">Numbers</div>
+  </div>
+</div>
+
+<div class="phrase-list" id="phrase-list"></div>
+
+<script>
+var PHRASES = [
+  // Basics
+  { cat: 'basics', emoji: '👋', en: 'Hello', is: 'Hæ / Halló', rom: 'Hye / Hah-loh', note: 'Hæ is more casual — perfectly fine in almost every situation.' },
+  { cat: 'basics', emoji: '🙏', en: 'Thank you', is: 'Takk / Takk fyrir', rom: 'Tahk / Tahk feer-eer', note: 'Takk is the quick version; Takk fyrir is more formal. Both are very common.' },
+  { cat: 'basics', emoji: '😊', en: 'You\'re welcome', is: 'Það var ekkert', rom: 'Thath var ek-ert', note: 'Literally "it was nothing." Very common response to thanks.' },
+  { cat: 'basics', emoji: '🤝', en: 'Please', is: 'Vinsamlegast', rom: 'Vin-sahm-leh-gast', note: 'A bit formal — Icelanders often just ask without it and it\'s perfectly polite.' },
+  { cat: 'basics', emoji: '👍', en: 'Yes / No', is: 'Já / Nei', rom: 'Yow / Nay', note: 'Já sounds like the English "yow." Very easy to remember.' },
+  { cat: 'basics', emoji: '😄', en: 'My name is…', is: 'Ég heiti…', rom: 'Yeg hey-tee', note: 'Literally "I am called…" Ég is pronounced with a silent G.' },
+  { cat: 'basics', emoji: '💬', en: 'Do you speak English?', is: 'Talar þú ensku?', rom: 'Tah-lar thoo en-skoo?', note: 'Almost every Icelander under 60 speaks excellent English, but asking is a nice gesture.' },
+  { cat: 'basics', emoji: '🤷', en: 'I don\'t understand', is: 'Ég skil ekki', rom: 'Yeg skil ek-ee', note: 'Useful if you want to signal you\'re lost without pretending to understand.' },
+  { cat: 'basics', emoji: '👋', en: 'Goodbye', is: 'Bless / Bless bless', rom: 'Bless / Bless bless', note: 'Bless bless (said twice) is the most typical casual goodbye — everyone says it.' },
+  { cat: 'basics', emoji: '🌅', en: 'Good morning', is: 'Góðan daginn', rom: 'Goh-than dah-yin', note: 'Used until afternoon. Daginn = "the day."' },
+  { cat: 'basics', emoji: '🌙', en: 'Good evening', is: 'Gott kvöld', rom: 'Got kvuld', note: 'The ö in kvöld is like the German ö — a rounded front vowel.' },
+  { cat: 'basics', emoji: '❓', en: 'Where is…?', is: 'Hvar er…?', rom: 'Kvar er…?', note: 'Hvar is pronounced with a guttural HV — like a soft K.' },
+
+  // Restaurant
+  { cat: 'restaurant', emoji: '🪑', en: 'A table for four, please', is: 'Borð fyrir fjóra, takk', rom: 'Borth feer-eer fyoh-rah, tahk', note: 'Swap fjóra (four) with tvo (two) or þrjá (three) as needed.' },
+  { cat: 'restaurant', emoji: '📋', en: 'The menu, please', is: 'Matseðilinn, takk', rom: 'Mat-seth-il-in, tahk', note: 'Most restaurants also have an English menu — just ask.' },
+  { cat: 'restaurant', emoji: '✅', en: 'I\'ll have this', is: 'Ég ætla að fá þetta', rom: 'Yeg et-lah ath fow thet-ah', note: 'Pointing works too — Icelanders are very relaxed about ordering.' },
+  { cat: 'restaurant', emoji: '🥤', en: 'Water, please', is: 'Vatn, takk', rom: 'Vat-n, tahk', note: 'Tap water in Iceland is some of the best in the world — always free and delicious.' },
+  { cat: 'restaurant', emoji: '🍺', en: 'A beer, please', is: 'Bjór, takk', rom: 'Byohr, tahk', note: 'Alcohol is expensive in Iceland — a pint runs ~1,500–2,000 ISK (~$11–15).' },
+  { cat: 'restaurant', emoji: '💳', en: 'The bill, please', is: 'Reikninginn, takk', rom: 'Rake-ning-in, tahk', note: 'Tipping is not customary in Iceland, but rounding up is appreciated.' },
+  { cat: 'restaurant', emoji: '😋', en: 'This is delicious', is: 'Þetta er ljúffengt', rom: 'Thet-ah er lyoof-fengt', note: 'Will delight any Icelandic chef. Ljúffengt = "delightfully tasty."' },
+  { cat: 'restaurant', emoji: '🐑', en: 'Lamb (typical dish)', is: 'Lambakjöt', rom: 'Lam-bah-kyut', note: 'Icelandic lamb is free-range and exceptionally flavourful. A must-try.' },
+  { cat: 'restaurant', emoji: '🐟', en: 'Arctic char (fish)', is: 'Bleikja', rom: 'Blay-kyah', note: 'A fresh-water fish similar to salmon — staple on Icelandic menus.' },
+
+  // Shopping
+  { cat: 'shopping', emoji: '💰', en: 'How much does this cost?', is: 'Hvað kostar þetta?', rom: 'Kvath kost-ar thet-ah?', note: 'Prices are always displayed in Icelandic Króna (ISK). Divide by ~137 for USD.' },
+  { cat: 'shopping', emoji: '🛍️', en: 'I\'m just looking', is: 'Ég er bara að skoða', rom: 'Yeg er bah-rah ath skoh-tha', note: 'Helpful if a shopkeeper approaches — perfectly polite way to browse.' },
+  { cat: 'shopping', emoji: '👕', en: 'Do you have this in a different size?', is: 'Á þið þetta í annarri stærð?', rom: 'Ow thith thet-ah ee an-ar-ee styrth?', note: 'Icelandic woolens (lopapeysa) run a bit large — always try before buying.' },
+  { cat: 'shopping', emoji: '🧾', en: 'Can I pay by card?', is: 'Má ég borga með korti?', rom: 'Mow yeg bor-gah meth kor-tee?', note: 'Cards are accepted almost everywhere in Iceland, even for small purchases.' },
+  { cat: 'shopping', emoji: '🛒', en: 'Where is the supermarket?', is: 'Hvar er matvöruverslunin?', rom: 'Kvar er mat-vur-oo-versloo-nin?', note: 'Bónus (yellow bag logo) is cheapest. Krónan and Nettó are also common.' },
+
+  // Transport
+  { cat: 'transport', emoji: '⛽', en: 'Where is a gas station?', is: 'Hvar er bensínstöð?', rom: 'Kvar er ben-seen-stuth?', note: 'Gas stations (N1, OB, Orkan) also have hot dogs — an Icelandic tradition.' },
+  { cat: 'transport', emoji: '🅿️', en: 'Where can I park?', is: 'Hvar má ég leggja?', rom: 'Kvar mow yeg leg-yah?', note: 'In Reykjavík, paid parking zones are marked P1–P4. App: Parka.' },
+  { cat: 'transport', emoji: '🗺️', en: 'Is this the road to…?', is: 'Er þetta vegurinn að…?', rom: 'Er thet-ah veg-oor-in ath…?', note: 'Route 1 (Hringvegurinn) = the Ring Road that circles the whole island.' },
+  { cat: 'transport', emoji: '🌧️', en: 'What\'s the weather like?', is: 'Hvernig er veðrið?', rom: 'Kver-nig er veth-rith?', note: 'Veðurinn = "the weather." Check en.vedur.is for official Icelandic forecasts.' },
+  { cat: 'transport', emoji: '🚦', en: 'Turn left / right', is: 'Beygðu til vinstri / hægri', rom: 'Bayg-thoo til vin-stree / hayg-ree', note: 'GPS in Iceland works well — but download offline maps before remote areas.' },
+
+  // Emergency
+  { cat: 'emergency', emoji: '🆘', en: 'Help!', is: 'Hjálp!', rom: 'Hyowlp!', note: 'Emergency number in Iceland: 112. Police, fire, ambulance — all on one number.' },
+  { cat: 'emergency', emoji: '👮', en: 'Call the police', is: 'Hringdu í lögregluna', rom: 'Hring-doo ee lug-reg-loo-nah', note: 'Emergency: 112. Non-emergency: +354 444 4000.' },
+  { cat: 'emergency', emoji: '🏥', en: 'I need a doctor', is: 'Ég þarf lækni', rom: 'Yeg tharf lake-nee', note: 'Landspítali is Reykjavík\'s main hospital. Smaller towns have health centers.' },
+  { cat: 'emergency', emoji: '🤕', en: 'I\'m hurt', is: 'Ég er særður / særð', rom: 'Yeg er sair-thoor / sairth', note: 'Særður (masc) / Særð (fem). Don\'t worry about the gender — they\'ll understand.' },
+  { cat: 'emergency', emoji: '💊', en: 'I need medication', is: 'Ég þarf lyf', rom: 'Yeg tharf liv', note: 'Pharmacies (Apótek) are found in most towns. Lyfja is the main chain.' },
+  { cat: 'emergency', emoji: '🔒', en: 'My wallet was stolen', is: 'Veskið mitt var stolið', rom: 'Ves-kith mit var stoh-lith', note: 'Iceland has very low crime — but useful to know. Notify police at 444-4000.' },
+
+  // Numbers
+  { cat: 'numbers', emoji: '1️⃣', en: 'One', is: 'Einn', rom: 'Ayn', note: '' },
+  { cat: 'numbers', emoji: '2️⃣', en: 'Two', is: 'Tveir', rom: 'Tvayr', note: '' },
+  { cat: 'numbers', emoji: '3️⃣', en: 'Three', is: 'Þrír', rom: 'Threer', note: '' },
+  { cat: 'numbers', emoji: '4️⃣', en: 'Four', is: 'Fjórir', rom: 'Fyoh-reer', note: '' },
+  { cat: 'numbers', emoji: '5️⃣', en: 'Five', is: 'Fimm', rom: 'Fim', note: '' },
+  { cat: 'numbers', emoji: '6️⃣', en: 'Six', is: 'Sex', rom: 'Sex', note: 'Same as English! Easy one.' },
+  { cat: 'numbers', emoji: '7️⃣', en: 'Seven', is: 'Sjö', rom: 'Syuh', note: '' },
+  { cat: 'numbers', emoji: '8️⃣', en: 'Eight', is: 'Átta', rom: 'Ow-tah', note: '' },
+  { cat: 'numbers', emoji: '9️⃣', en: 'Nine', is: 'Níu', rom: 'Nee-oo', note: '' },
+  { cat: 'numbers', emoji: '🔟', en: 'Ten', is: 'Tíu', rom: 'Tee-oo', note: '' },
+  { cat: 'numbers', emoji: '💯', en: 'One hundred', is: 'Eitt hundrað', rom: 'Ayt hoon-drauth', note: 'Useful for discussing prices in ISK.' },
+  { cat: 'numbers', emoji: '💰', en: 'One thousand', is: 'Eitt þúsund', rom: 'Ayt thoo-sund', note: '1,000 ISK ≈ $7.30. Most things cost thousands of ISK.' }
+];
+
+var activeFilter = 'all';
+var searchQuery = '';
+
+function setFilter(cat, el) {
+  activeFilter = cat;
+  document.querySelectorAll('.filter-pill').forEach(function(p) { p.classList.remove('active'); });
+  el.classList.add('active');
+  filterPhrases();
+}
+
+function filterPhrases() {
+  searchQuery = document.getElementById('search').value.toLowerCase().trim();
+  renderPhrases();
+}
+
+function renderPhrases() {
+  var list = document.getElementById('phrase-list');
+  var filtered = PHRASES.filter(function(p) {
+    var catMatch = activeFilter === 'all' || p.cat === activeFilter;
+    var searchMatch = !searchQuery ||
+      p.en.toLowerCase().includes(searchQuery) ||
+      p.is.toLowerCase().includes(searchQuery) ||
+      p.rom.toLowerCase().includes(searchQuery) ||
+      p.note.toLowerCase().includes(searchQuery);
+    return catMatch && searchMatch;
+  });
+
+  if (filtered.length === 0) {
+    list.innerHTML = '<div class="empty-state"><div class="empty-state-icon">🔍</div>No phrases found</div>';
+    return;
+  }
+
+  list.innerHTML = filtered.map(function(p, i) {
+    var noteHtml = p.note
+      ? '<div class="phrase-detail"><div class="phrase-note">' + escHtml(p.note) + '</div></div>'
+      : '';
+    var chevron = p.note ? '<div class="phrase-chevron">›</div>' : '';
+    var clickable = p.note ? 'onclick="togglePhrase(this)"' : '';
+    return '<div class="phrase-card" ' + clickable + '>' +
+      '<div class="phrase-main">' +
+        '<div class="phrase-emoji">' + p.emoji + '</div>' +
+        '<div class="phrase-texts">' +
+          '<div class="phrase-english">' + escHtml(p.en) + '</div>' +
+          '<div class="phrase-icelandic">' + escHtml(p.is) + '</div>' +
+          '<div class="phrase-roman">' + escHtml(p.rom) + '</div>' +
+        '</div>' +
+        chevron +
+      '</div>' +
+      noteHtml +
+    '</div>';
+  }).join('');
+}
+
+function togglePhrase(card) {
+  card.classList.toggle('open');
+}
+
+function escHtml(str) {
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+renderPhrases();
+</script>
+
+</body>
+</html>

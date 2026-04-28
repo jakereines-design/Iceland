@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0f0f0f">
+<title>Iceland 2026</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+body {
+  background: #0f0f0f;
+  color: #f0f0f0;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', sans-serif;
+  min-height: 100vh;
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: calc(env(safe-area-inset-bottom) + 24px);
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+/* ── Hero ── */
+.hero {
+  padding: 32px 20px 24px;
+  text-align: center;
+}
+.hero-flag { font-size: 36px; margin-bottom: 6px; }
+.hero-title {
+  font-size: 42px;
+  font-weight: 700;
+  letter-spacing: 6px;
+  color: #f0f0f0;
+  margin-bottom: 4px;
+}
+.hero-dates {
+  font-size: 14px;
+  color: #888;
+  letter-spacing: 1px;
+}
+
+/* ── Countdown ── */
+.section { padding: 0 16px 20px; }
+.section-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: #555;
+  margin-bottom: 10px;
+  padding-left: 4px;
+}
+
+.countdown-card {
+  background: #1a1a1a;
+  border-radius: 16px;
+  border: 1px solid #2a2a2a;
+  padding: 20px 16px;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+.countdown-unit { text-align: center; }
+.countdown-num {
+  font-size: 36px;
+  font-weight: 700;
+  color: #f0f0f0;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  min-width: 56px;
+  display: block;
+}
+.countdown-label {
+  font-size: 10px;
+  color: #555;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin-top: 4px;
+}
+.countdown-sep {
+  font-size: 28px;
+  font-weight: 300;
+  color: #333;
+  margin-bottom: 14px;
+}
+.departed-msg {
+  text-align: center;
+  color: #007aff;
+  font-size: 16px;
+  font-weight: 600;
+  padding: 12px 0;
+}
+
+/* ── Currency ── */
+.currency-card {
+  background: #1a1a1a;
+  border-radius: 16px;
+  border: 1px solid #2a2a2a;
+  padding: 16px;
+}
+.currency-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+.currency-flag-label {
+  font-size: 13px;
+  color: #888;
+  min-width: 44px;
+}
+.currency-input {
+  flex: 1;
+  background: #0f0f0f;
+  border: 1px solid #333;
+  border-radius: 10px;
+  color: #f0f0f0;
+  font-size: 18px;
+  font-family: inherit;
+  padding: 10px 12px;
+  outline: none;
+  -webkit-appearance: none;
+}
+.currency-input:focus { border-color: #007aff; }
+.currency-result {
+  font-size: 28px;
+  font-weight: 700;
+  color: #007aff;
+}
+.currency-rate {
+  font-size: 11px;
+  color: #444;
+  margin-top: 6px;
+}
+.currency-divider {
+  height: 1px;
+  background: #2a2a2a;
+  margin: 12px 0;
+}
+
+/* ── Nav cards ── */
+.nav-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.nav-card {
+  background: #1a1a1a;
+  border: 1px solid #2a2a2a;
+  border-radius: 16px;
+  padding: 20px 16px;
+  text-decoration: none;
+  color: #f0f0f0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: background 0.15s;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.nav-card:active { background: #252525; }
+.nav-icon { font-size: 26px; }
+.nav-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #f0f0f0;
+}
+.nav-sub {
+  font-size: 12px;
+  color: #555;
+}
+.nav-arrow {
+  font-size: 12px;
+  color: #333;
+  margin-top: auto;
+}
+
+/* ── Stats ── */
+.stats-card {
+  background: #1a1a1a;
+  border: 1px solid #2a2a2a;
+  border-radius: 16px;
+  padding: 16px;
+  display: flex;
+  justify-content: space-around;
+}
+.stat { text-align: center; }
+.stat-num {
+  font-size: 28px;
+  font-weight: 700;
+  color: #f0f0f0;
+}
+.stat-label {
+  font-size: 11px;
+  color: #555;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  margin-top: 2px;
+}
+.stat-divider {
+  width: 1px;
+  background: #2a2a2a;
+  align-self: stretch;
+}
+
+/* ── Route ── */
+.route-card {
+  background: #1a1a1a;
+  border: 1px solid #2a2a2a;
+  border-radius: 16px;
+  padding: 16px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.route-track {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  white-space: nowrap;
+  min-width: max-content;
+}
+.route-stop {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+.route-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #007aff;
+  flex-shrink: 0;
+}
+.route-dot.start { background: #34c759; }
+.route-dot.end   { background: #ff3b30; }
+.route-name {
+  font-size: 11px;
+  color: #888;
+  text-align: center;
+  max-width: 70px;
+  white-space: normal;
+  line-height: 1.2;
+}
+.route-line {
+  width: 28px;
+  height: 1px;
+  background: #333;
+  flex-shrink: 0;
+  margin-bottom: 14px;
+}
+.route-date {
+  font-size: 10px;
+  color: #444;
+}
+</style>
+</head>
+<body>
+
+<!-- Hero -->
+<div class="hero">
+  <div class="hero-flag">🇮🇸</div>
+  <div class="hero-title">ICELAND</div>
+  <div class="hero-dates">JUN 18 – 22 · 2026</div>
+</div>
+
+<!-- Countdown -->
+<div class="section">
+  <div class="section-label">Departure In</div>
+  <div class="countdown-card" id="countdown-card">
+    <div class="countdown-unit">
+      <span class="countdown-num" id="cd-days">--</span>
+      <div class="countdown-label">Days</div>
+    </div>
+    <div class="countdown-sep">·</div>
+    <div class="countdown-unit">
+      <span class="countdown-num" id="cd-hours">--</span>
+      <div class="countdown-label">Hours</div>
+    </div>
+    <div class="countdown-sep">·</div>
+    <div class="countdown-unit">
+      <span class="countdown-num" id="cd-mins">--</span>
+      <div class="countdown-label">Mins</div>
+    </div>
+    <div class="countdown-sep">·</div>
+    <div class="countdown-unit">
+      <span class="countdown-num" id="cd-secs">--</span>
+      <div class="countdown-label">Secs</div>
+    </div>
+  </div>
+</div>
+
+<!-- Currency -->
+<div class="section">
+  <div class="section-label">Currency Converter</div>
+  <div class="currency-card">
+    <div class="currency-row">
+      <div class="currency-flag-label">🇮🇸 ISK</div>
+      <input class="currency-input" type="number" id="isk-input" placeholder="1000" inputmode="numeric" oninput="convertISK()">
+    </div>
+    <div class="currency-divider"></div>
+    <div class="currency-row">
+      <div class="currency-flag-label">🇺🇸 USD</div>
+      <div class="currency-result" id="usd-result">—</div>
+    </div>
+    <div class="currency-rate" id="rate-label">Loading rate…</div>
+  </div>
+</div>
+
+<!-- Nav cards -->
+<div class="section">
+  <div class="section-label">Quick Access</div>
+  <div class="nav-grid">
+    <a class="nav-card" href="map.html">
+      <div class="nav-icon">🗺️</div>
+      <div class="nav-title">Map</div>
+      <div class="nav-sub">Hotels, restaurants & activities</div>
+      <div class="nav-arrow">→</div>
+    </a>
+    <a class="nav-card" href="itinerary.html">
+      <div class="nav-icon">📅</div>
+      <div class="nav-title">Itinerary</div>
+      <div class="nav-sub">Day by day plan</div>
+      <div class="nav-arrow">→</div>
+    </a>
+    <a class="nav-card" href="cheatsheet.html">
+      <div class="nav-icon">📋</div>
+      <div class="nav-title">Cheatsheet</div>
+      <div class="nav-sub">Bookings & contacts</div>
+      <div class="nav-arrow">→</div>
+    </a>
+    <a class="nav-card" href="phrases.html">
+      <div class="nav-icon">💬</div>
+      <div class="nav-title">Phrases</div>
+      <div class="nav-sub">Icelandic essentials</div>
+      <div class="nav-arrow">→</div>
+    </a>
+  </div>
+</div>
+
+<!-- Stats -->
+<div class="section">
+  <div class="section-label">Trip Stats</div>
+  <div class="stats-card">
+    <div class="stat">
+      <div class="stat-num">5</div>
+      <div class="stat-label">Days</div>
+    </div>
+    <div class="stat-divider"></div>
+    <div class="stat">
+      <div class="stat-num">4</div>
+      <div class="stat-label">Travelers</div>
+    </div>
+    <div class="stat-divider"></div>
+    <div class="stat">
+      <div class="stat-num">4</div>
+      <div class="stat-label">Cities</div>
+    </div>
+    <div class="stat-divider"></div>
+    <div class="stat">
+      <div class="stat-num">1</div>
+      <div class="stat-label">💍</div>
+    </div>
+  </div>
+</div>
+
+<!-- Route -->
+<div class="section">
+  <div class="section-label">Route</div>
+  <div class="route-card">
+    <div class="route-track">
+      <div class="route-stop">
+        <div class="route-dot start"></div>
+        <div class="route-name">KEF<br>Airport</div>
+        <div class="route-date">Jun 18</div>
+      </div>
+      <div class="route-line"></div>
+      <div class="route-stop">
+        <div class="route-dot"></div>
+        <div class="route-name">Reykjavík</div>
+        <div class="route-date">Jun 18</div>
+      </div>
+      <div class="route-line"></div>
+      <div class="route-stop">
+        <div class="route-dot"></div>
+        <div class="route-name">South<br>Coast</div>
+        <div class="route-date">Jun 19</div>
+      </div>
+      <div class="route-line"></div>
+      <div class="route-stop">
+        <div class="route-dot"></div>
+        <div class="route-name">Vík</div>
+        <div class="route-date">Jun 20</div>
+      </div>
+      <div class="route-line"></div>
+      <div class="route-stop">
+        <div class="route-dot"></div>
+        <div class="route-name">Golden<br>Circle</div>
+        <div class="route-date">Jun 21</div>
+      </div>
+      <div class="route-line"></div>
+      <div class="route-stop">
+        <div class="route-dot end"></div>
+        <div class="route-name">KEF<br>Airport</div>
+        <div class="route-date">Jun 22</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── Countdown ──────────────────────────────────────
+var DEPART = new Date('2026-06-18T09:30:00');
+function pad(n) { return String(n).padStart(2, '0'); }
+function tick() {
+  var now = new Date();
+  var diff = DEPART - now;
+  if (diff <= 0) {
+    document.getElementById('countdown-card').innerHTML = '<div class="departed-msg">✈️ Trip is on! Have an incredible time.</div>';
+    return;
+  }
+  var d = Math.floor(diff / 86400000);
+  var h = Math.floor((diff % 86400000) / 3600000);
+  var m = Math.floor((diff % 3600000) / 60000);
+  var s = Math.floor((diff % 60000) / 1000);
+  document.getElementById('cd-days').textContent  = pad(d);
+  document.getElementById('cd-hours').textContent = pad(h);
+  document.getElementById('cd-mins').textContent  = pad(m);
+  document.getElementById('cd-secs').textContent  = pad(s);
+}
+tick();
+setInterval(tick, 1000);
+
+// ── Currency ──────────────────────────────────────
+var iskRate = 137;
+fetch('https://open.er-api.com/v6/latest/USD')
+  .then(function(r) { return r.json(); })
+  .then(function(d) {
+    if (d.rates && d.rates.ISK) {
+      iskRate = d.rates.ISK;
+      document.getElementById('rate-label').textContent = '1 USD = ' + iskRate.toFixed(0) + ' ISK (live rate)';
+      convertISK();
+    }
+  })
+  .catch(function() {
+    document.getElementById('rate-label').textContent = '1 USD ≈ 137 ISK (fallback rate)';
+  });
+
+function convertISK() {
+  var isk = parseFloat(document.getElementById('isk-input').value);
+  var el = document.getElementById('usd-result');
+  if (!isk || isNaN(isk)) { el.textContent = '—'; return; }
+  var usd = isk / iskRate;
+  el.textContent = '$' + usd.toFixed(2);
+}
+</script>
+
+<script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/Iceland/sw.js');
+}
+</script>
+</body>
+</html>

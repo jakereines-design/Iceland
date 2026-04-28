@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0f0f0f">
+<title>Map — Iceland 2026</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+html, body { height: 100%; background: #0f0f0f; }
+
+/* ── Top bar ── */
+#topbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  background: rgba(15,15,15,0.82);
+  -webkit-backdrop-filter: blur(20px) saturate(1.8);
+  backdrop-filter: blur(20px) saturate(1.8);
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  padding-top: env(safe-area-inset-top);
+}
+.topbar-inner {
+  display: flex;
+  align-items: center;
+  padding: 10px 14px;
+  gap: 10px;
+}
+.back-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: #007aff;
+  font-size: 16px;
+  text-decoration: none;
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  flex-shrink: 0;
+}
+.topbar-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #f0f0f0;
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+}
+.tabs-row {
+  display: flex;
+  gap: 6px;
+  padding: 0 14px 10px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.tabs-row::-webkit-scrollbar { display: none; }
+.city-tab {
+  flex-shrink: 0;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  background: rgba(255,255,255,0.08);
+  color: #aaa;
+  border: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 0.15s, color 0.15s;
+}
+.city-tab.active {
+  background: #007aff;
+  color: #fff;
+}
+
+/* ── Map ── */
+#map {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+.leaflet-tile-pane {
+  -webkit-filter: sepia(0.12) brightness(0.88) contrast(1.08);
+  filter: sepia(0.12) brightness(0.88) contrast(1.08);
+}
+.leaflet-control-zoom { display: none; }
+.leaflet-control-attribution {
+  background: rgba(15,15,15,0.6) !important;
+  color: #555 !important;
+  font-size: 9px !important;
+}
+.leaflet-control-attribution a { color: #555 !important; }
+
+/* ── Custom pin ── */
+.pin-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.pin-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 2.5px solid #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+}
+
+/* ── Bottom sheet ── */
+#sheet-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 900;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s;
+}
+#sheet-backdrop.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+#bottom-sheet {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 901;
+  background: #1a1a1a;
+  border-radius: 20px 20px 0 0;
+  padding: 0 0 calc(env(safe-area-inset-bottom) + 24px);
+  transform: translateY(100%);
+  transition: transform 0.32s cubic-bezier(0.32, 0.72, 0, 1);
+  max-width: 480px;
+  margin: 0 auto;
+}
+#bottom-sheet.open { transform: translateY(0); }
+.sheet-handle {
+  width: 36px;
+  height: 4px;
+  background: #444;
+  border-radius: 2px;
+  margin: 12px auto 16px;
+}
+.sheet-content { padding: 0 20px 4px; }
+.sheet-type-badge {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  padding: 3px 9px;
+  border-radius: 20px;
+  color: #fff;
+  margin-bottom: 8px;
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+}
+.sheet-name {
+  font-size: 20px;
+  font-weight: 700;
+  color: #f0f0f0;
+  margin-bottom: 6px;
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  line-height: 1.25;
+}
+.sheet-detail {
+  font-size: 13px;
+  color: #888;
+  line-height: 1.6;
+  margin-bottom: 6px;
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+}
+.sheet-confirm {
+  font-size: 12px;
+  color: #555;
+  margin-bottom: 16px;
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+}
+.sheet-maps-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  padding: 13px;
+  background: #007aff;
+  color: #fff;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  text-decoration: none;
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ── Legend ── */
+#legend {
+  position: fixed;
+  bottom: calc(env(safe-area-inset-bottom) + 16px);
+  right: 16px;
+  z-index: 500;
+  background: rgba(15,15,15,0.82);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 12px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 11px;
+  color: #888;
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+}
+.legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  border: 2px solid rgba(255,255,255,0.4);
+}
+</style>
+</head>
+<body>
+
+<div id="map"></div>
+
+<div id="topbar">
+  <div class="topbar-inner">
+    <a class="back-btn" href="index.html">‹ Home</a>
+    <div class="topbar-title">Iceland 2026</div>
+  </div>
+  <div class="tabs-row">
+    <button class="city-tab active" id="tab-reykjavik"  onclick="showCity('reykjavik')">Reykjavík</button>
+    <button class="city-tab"        id="tab-southcoast" onclick="showCity('southcoast')">South Coast</button>
+    <button class="city-tab"        id="tab-vik"        onclick="showCity('vik')">Vík</button>
+    <button class="city-tab"        id="tab-golden"     onclick="showCity('golden')">Golden Circle</button>
+  </div>
+</div>
+
+<div id="legend">
+  <div class="legend-item"><div class="legend-dot" style="background:#007aff"></div>Hotels</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#ff3b30"></div>Restaurants</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#34c759"></div>Activities</div>
+</div>
+
+<div id="sheet-backdrop" onclick="closeSheet()"></div>
+<div id="bottom-sheet" id="bottom-sheet">
+  <div class="sheet-handle"></div>
+  <div class="sheet-content">
+    <div class="sheet-type-badge" id="s-badge">Hotel</div>
+    <div class="sheet-name"    id="s-name"></div>
+    <div class="sheet-detail"  id="s-detail"></div>
+    <div class="sheet-confirm" id="s-confirm"></div>
+    <a class="sheet-maps-btn"  id="s-maps" href="#" target="_blank">📍 Open in Maps</a>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script>
+// ── Data ─────────────────────────────────────────
+var PINS = {
+  reykjavik: [
+    { type:'hotel',      name:'Reykjavík Residence Hotel', lat:64.1481, lon:-21.9384, detail:'Check-in Thu Jun 18 · Studio with kitchenette', confirm:'Booking RKMZF4163366', addr:'Vatnsstígur 2, Reykjavík' },
+    { type:'activity',   name:'Hallgrímskirkja',  lat:64.1420, lon:-21.9265, detail:'Iconic church with panoramic tower views of the city', confirm:'', addr:'Hallgrímstorg 101, Reykjavík' },
+    { type:'activity',   name:'Sun Voyager',      lat:64.1476, lon:-21.9147, detail:'Famous sculpture on the Reykjavík waterfront', confirm:'', addr:'Sæbraut, Reykjavík' },
+    { type:'activity',   name:'Laugavegur',       lat:64.1462, lon:-21.9445, detail:'Main shopping and dining street — explore on foot', confirm:'', addr:'Laugavegur, Reykjavík' },
+    { type:'restaurant', name:'Dill',             lat:64.1430, lon:-21.9577, detail:'Michelin-starred Nordic tasting menu · Book well in advance', confirm:'$$$$', addr:'Hverfisgata 12, Reykjavík' },
+    { type:'restaurant', name:'OX',               lat:64.1471, lon:-21.9522, detail:"Intimate chef's table, only 20 seats · Book early", confirm:'$$$$', addr:'Lækjargata 6, Reykjavík' },
+    { type:'restaurant', name:'Matur og Drykkur', lat:64.1450, lon:-21.9638, detail:'Traditional Icelandic reimagined · Great first-night choice', confirm:'$$$$', addr:'Grandagarður 2, Reykjavík' },
+    { type:'restaurant', name:'Tides',            lat:64.1502, lon:-21.9484, detail:'Modern Scandinavian inside the Reykjavík EDITION hotel', confirm:'$$$', addr:'Austurbakki 2, Reykjavík' },
+  ],
+  southcoast: [
+    { type:'hotel',      name:'Lilja Lodge · Harmony Seljalandsfoss', lat:63.6252, lon:-20.1850, detail:'Jake & Bella · Check-in Fri Jun 19 · 4pm · Private hot tub & sauna', confirm:'Booking RFPZG4163390', addr:'Dílaflöt, 861 Hvolsvöllur, Iceland' },
+    { type:'hotel',      name:'Georg Lodge · Harmony Seljalandsfoss', lat:63.6258, lon:-20.1840, detail:'Chase & Caroline · Check-in Fri Jun 19 · Same property', confirm:'Harmony Seljalandsfoss', addr:'Dílaflöt, 861 Hvolsvöllur, Iceland' },
+    { type:'activity',   name:'Seljalandsfoss',   lat:63.6152, lon:-20.1537, detail:'Walk all the way behind this 60m waterfall — one of the most magical spots in Iceland', confirm:'', addr:'Seljalandsfoss, Iceland' },
+    { type:'activity',   name:'Gljúfrabúi',       lat:63.6183, lon:-20.1000, detail:'Hidden waterfall inside a canyon — squeeze through the rocks to find it', confirm:'', addr:'Gljúfrabúi, Iceland' },
+    { type:'activity',   name:'Nauthúsagil Ravine', lat:63.6690, lon:-19.8580, detail:'Hidden moss gorge — wade up a shallow stream to the waterfall inside. Almost nobody goes here. Top proposal candidate.', confirm:'15 min east of Seljalandsfoss · Rt 249', addr:'Nauthúsagil, Iceland' },
+    { type:'activity',   name:'Skógafoss',        lat:63.5320, lon:-19.5117, detail:'Iconic 60m waterfall — rainbows on sunny days. Stairs to the top for panoramic views.', confirm:'', addr:'Skógafoss, Iceland' },
+    { type:'restaurant', name:'Hotel Rangá',      lat:63.8438, lon:-20.0782, detail:'Best restaurant on the south coast · Nordic cuisine · Lamb, reindeer, langoustine · Open to non-guests · Book table for 4', confirm:'6:30–10pm · $$$$', addr:'Rangá, Hella, Iceland' },
+  ],
+  vik: [
+    { type:'hotel',      name:'Solheimahjáleiga Guesthouse', lat:63.5180, lon:-19.5650, detail:'Sat Jun 20 · Twin + triple room · Breakfast included · Free parking · DC-3 wreck on property', confirm:'Booking H-297945 · Check-in 3pm', addr:'Sólheimahjáleiga, Vík, Iceland' },
+    { type:'activity',   name:'Reynisfjara Black Sand Beach', lat:63.4038, lon:-19.0441, detail:'Dramatic basalt columns, crashing Atlantic waves and puffin nesting cliffs in June', confirm:'', addr:'Reynisfjara, Vík, Iceland' },
+    { type:'activity',   name:'Dyrhólaey',        lat:63.4004, lon:-19.1299, detail:'Sea arch with puffins nesting all along the clifftops in June · Easy to get very close', confirm:'June = peak nesting 🐦', addr:'Dyrhólaey, Iceland' },
+    { type:'activity',   name:'Ingólfshöfði',     lat:63.7970, lon:-18.0190, detail:'Tractor wagon ride to remote headland — thousands of puffins nest here in June · Book guided tour in advance', confirm:'Best puffin experience in Iceland 🐦', addr:'Ingólfshöfði, Iceland' },
+    { type:'activity',   name:'DC-3 Plane Wreck', lat:63.4591, lon:-19.3638, detail:'Famous American military plane that crashed in 1973 · 4km hike across black sand or tractor tour from Solheimahjáleiga', confirm:'Accessible from your guesthouse', addr:'Sólheimasandur, Iceland' },
+    { type:'activity',   name:'Vík Village',      lat:63.4190, lon:-19.0050, detail:"Iceland's southernmost village — great lunch stop with views of the iconic church on the hill", confirm:'', addr:'Vík, Iceland' },
+    { type:'restaurant', name:'Halldórskaffi',    lat:63.4195, lon:-19.0021, detail:'Cozy local spot in Vík · Great for dinner after a long day on the south coast', confirm:'$$ · Vík', addr:'Víkurbraut 28, Vík, Iceland' },
+  ],
+  golden: [
+    { type:'activity',   name:'Þingvellir National Park', lat:64.2554, lon:-21.1300, detail:'Where the North American and Eurasian tectonic plates meet · UNESCO World Heritage site · Original Icelandic parliament', confirm:'', addr:'Þingvellir, Iceland' },
+    { type:'activity',   name:'Strokkur Geysir',  lat:64.3130, lon:-20.3003, detail:'Erupts every 5–10 minutes shooting water 20–30 meters · Satisfying every time', confirm:'', addr:'Geysir, Iceland' },
+    { type:'activity',   name:'Gullfoss Waterfall', lat:64.3270, lon:-20.1200, detail:'Massive two-tiered waterfall dropping into a dramatic canyon — one of the most iconic landscapes in Iceland', confirm:'', addr:'Gullfoss, Iceland' },
+    { type:'restaurant', name:'Fjöruborðið',      lat:63.8330, lon:-20.9769, detail:"Iceland's most famous langoustine restaurant · Garlic butter langoustine tails · Book ahead", confirm:'$$$$ · Stokkseyri', addr:'Eyrarbraut 3A, Stokkseyri, Iceland' },
+    { type:'restaurant', name:'Friðheimar',       lat:64.0690, lon:-20.5730, detail:'Greenhouse farm restaurant · Entire menu built around their own tomatoes · Unique experience', confirm:'$$ · Near Selfoss', addr:'Friðheimar, Reykholt, Iceland' },
+  ],
+};
+
+var CITY_VIEWS = {
+  reykjavik:  { center: [64.142, -21.935], zoom: 14 },
+  southcoast: { center: [63.630, -20.100], zoom: 11 },
+  vik:        { center: [63.450, -19.200], zoom: 11 },
+  golden:     { center: [64.290, -20.500], zoom: 10 },
+};
+
+var TYPE_COLORS = { hotel: '#007aff', restaurant: '#ff3b30', activity: '#34c759' };
+var TYPE_LABELS = { hotel: '🏨 Hotel', restaurant: '🍽 Restaurant', activity: '🗺 Activity' };
+
+var map;
+var layerGroups = {};
+var currentCity = 'reykjavik';
+
+// ── Globally scoped functions ─────────────────────
+function makeIcon(color) {
+  return L.divIcon({
+    className: '',
+    html: '<div style="width:14px;height:14px;border-radius:50%;background:' + color + ';border:2.5px solid white;box-shadow:0 2px 8px rgba(0,0,0,0.5)"></div>',
+    iconSize: [14, 14],
+    iconAnchor: [7, 7],
+    popupAnchor: [0, -10]
+  });
+}
+
+function showCity(city) {
+  // Update tab styles
+  document.querySelectorAll('.city-tab').forEach(function(t) { t.classList.remove('active'); });
+  document.getElementById('tab-' + city).classList.add('active');
+  currentCity = city;
+
+  // Show/hide layers
+  Object.keys(layerGroups).forEach(function(k) {
+    if (k === city) {
+      layerGroups[k].addTo(map);
+    } else {
+      map.removeLayer(layerGroups[k]);
+    }
+  });
+
+  // Fly to city
+  var v = CITY_VIEWS[city];
+  map.flyTo(v.center, v.zoom, { duration: 1.0 });
+  closeSheet();
+}
+
+function openSheet(pin) {
+  var color = TYPE_COLORS[pin.type];
+  var badge = document.getElementById('s-badge');
+  badge.textContent = TYPE_LABELS[pin.type];
+  badge.style.background = color;
+  document.getElementById('s-name').textContent    = pin.name;
+  document.getElementById('s-detail').textContent  = pin.detail;
+  document.getElementById('s-confirm').textContent = pin.confirm;
+  var mapsUrl = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(pin.addr || pin.name);
+  document.getElementById('s-maps').href = mapsUrl;
+  document.getElementById('bottom-sheet').classList.add('open');
+  document.getElementById('sheet-backdrop').classList.add('visible');
+}
+
+function closeSheet() {
+  document.getElementById('bottom-sheet').classList.remove('open');
+  document.getElementById('sheet-backdrop').classList.remove('visible');
+}
+
+// ── Init map ──────────────────────────────────────
+window.onload = function() {
+  // Calculate top offset for map
+  var topbar = document.getElementById('topbar');
+  var topH = topbar ? topbar.offsetHeight : 100;
+  document.getElementById('map').style.top = '0';
+
+  map = L.map('map', {
+    zoomControl: false,
+    attributionControl: true
+  }).setView(CITY_VIEWS.reykjavik.center, CITY_VIEWS.reykjavik.zoom);
+
+  // ArcGIS base tiles
+  L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
+    attribution: 'Tiles © Esri',
+    maxZoom: 18
+  }).addTo(map);
+
+  // ArcGIS label overlay
+  L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Reference/MapServer/tile/{z}/{y}/{x}', {
+    maxZoom: 18,
+    pane: 'overlayPane'
+  }).addTo(map);
+
+  // Build layer groups and markers
+  Object.keys(PINS).forEach(function(city) {
+    layerGroups[city] = L.layerGroup();
+    PINS[city].forEach(function(pin) {
+      var color = TYPE_COLORS[pin.type];
+      var marker = L.marker([pin.lat, pin.lon], { icon: makeIcon(color) });
+      marker.on('click', function() { openSheet(pin); });
+      layerGroups[city].addLayer(marker);
+    });
+  });
+
+  // Show initial city
+  showCity('reykjavik');
+};
+</script>
+
+<script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/Iceland/sw.js');
+}
+</script>
+</body>
+</html>

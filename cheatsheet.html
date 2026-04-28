@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0f0f0f">
+<title>Cheatsheet — Iceland 2026</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+body {
+  background: #0f0f0f;
+  color: #f0f0f0;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', sans-serif;
+  min-height: 100vh;
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: calc(env(safe-area-inset-bottom) + 32px);
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+/* ── Topbar ── */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(15,15,15,0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid #1e1e1e;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-top: max(12px, env(safe-area-inset-top));
+}
+.topbar-back {
+  font-size: 15px;
+  color: #007aff;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+.topbar-title {
+  font-size: 17px;
+  font-weight: 600;
+  color: #f0f0f0;
+  flex: 1;
+  text-align: center;
+}
+.topbar-spacer { width: 48px; flex-shrink: 0; }
+
+/* ── Sections ── */
+.section { padding: 0 16px 20px; }
+.section:first-of-type { padding-top: 20px; }
+
+.section-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: #555;
+  margin-bottom: 10px;
+  padding-left: 4px;
+}
+
+/* ── Cards ── */
+.card {
+  background: #1a1a1a;
+  border: 1px solid #2a2a2a;
+  border-radius: 16px;
+  overflow: hidden;
+}
+.card-row {
+  display: flex;
+  align-items: flex-start;
+  padding: 14px 16px;
+  gap: 12px;
+  border-bottom: 1px solid #222;
+}
+.card-row:last-child { border-bottom: none; }
+.card-row-icon {
+  font-size: 18px;
+  flex-shrink: 0;
+  width: 28px;
+  text-align: center;
+  margin-top: 1px;
+}
+.card-row-body { flex: 1; min-width: 0; }
+.card-row-label {
+  font-size: 11px;
+  color: #555;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin-bottom: 3px;
+}
+.card-row-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #f0f0f0;
+  margin-bottom: 2px;
+}
+.card-row-sub {
+  font-size: 13px;
+  color: #888;
+  line-height: 1.4;
+  margin-bottom: 4px;
+}
+.card-row-conf {
+  font-size: 12px;
+  color: #555;
+  font-family: 'SF Mono', 'Menlo', monospace;
+}
+
+/* ── Tags ── */
+.tag {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  padding: 2px 8px;
+  border-radius: 20px;
+  margin-right: 6px;
+  margin-bottom: 6px;
+}
+.tag-confirmed { background: rgba(52,199,89,0.15); color: #34c759; }
+.tag-pending   { background: rgba(255,159,10,0.15); color: #ff9f0a; }
+.tag-urgent    { background: rgba(255,59,48,0.15);  color: #ff3b30; }
+
+/* ── Links ── */
+a.link-blue {
+  color: #007aff;
+  text-decoration: none;
+  font-size: 13px;
+}
+a.link-blue:active { opacity: 0.6; }
+
+/* ── Action buttons ── */
+.action-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+  flex-wrap: wrap;
+}
+.action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: #252525;
+  border: 1px solid #333;
+  border-radius: 10px;
+  color: #007aff;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 7px 12px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.15s;
+  -webkit-tap-highlight-color: transparent;
+}
+.action-btn:active { background: #333; }
+.action-btn-icon { font-size: 13px; }
+
+/* ── Confirmation number ── */
+.conf-block {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 6px;
+}
+.conf-num {
+  font-family: 'SF Mono', 'Menlo', monospace;
+  font-size: 13px;
+  color: #aaa;
+  background: #111;
+  border: 1px solid #2a2a2a;
+  border-radius: 8px;
+  padding: 4px 10px;
+  letter-spacing: 0.5px;
+}
+.copy-btn {
+  font-size: 11px;
+  color: #007aff;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 6px;
+  background: transparent;
+  border: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.copy-btn:active { background: #252525; }
+
+/* ── Divider ── */
+.divider { height: 1px; background: #2a2a2a; margin: 0 16px; }
+
+/* ── Info note ── */
+.note {
+  background: rgba(0,122,255,0.08);
+  border: 1px solid rgba(0,122,255,0.2);
+  border-radius: 12px;
+  padding: 12px 14px;
+  font-size: 13px;
+  color: #aaa;
+  line-height: 1.5;
+}
+.note strong { color: #007aff; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a class="topbar-back" href="index.html">← Home</a>
+  <div class="topbar-title">Cheatsheet</div>
+  <div class="topbar-spacer"></div>
+</div>
+
+<!-- Flights -->
+<div class="section">
+  <div class="section-label">Flights</div>
+  <div class="card">
+    <div class="card-row">
+      <div class="card-row-icon">✈️</div>
+      <div class="card-row-body">
+        <div class="card-row-label">Outbound</div>
+        <div class="card-row-title">NYC → KEF</div>
+        <div class="card-row-sub">Thursday, Jun 18 · Delta</div>
+        <span class="tag tag-confirmed">Confirmed</span>
+        <div class="conf-block">
+          <span class="conf-num">Trip ID 1015286827</span>
+          <button class="copy-btn" onclick="copyText('1015286827',this)">Copy</button>
+        </div>
+        <div class="action-row">
+          <a class="action-btn" href="https://www.delta.com/us/en/my-trips/trip-details?tripid=1015286827" target="_blank">
+            <span class="action-btn-icon">🔗</span> Chase Travel
+          </a>
+        </div>
+        <div class="card-row-sub" style="margin-top:8px;">$1,303.26 total</div>
+      </div>
+    </div>
+    <div class="card-row">
+      <div class="card-row-icon">✈️</div>
+      <div class="card-row-body">
+        <div class="card-row-label">Return</div>
+        <div class="card-row-title">KEF → NYC</div>
+        <div class="card-row-sub">Monday, Jun 22 · Delta · Car dropoff by 8:00am</div>
+        <span class="tag tag-confirmed">Confirmed</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Rental Car -->
+<div class="section">
+  <div class="section-label">Rental Car</div>
+  <div class="card">
+    <div class="card-row">
+      <div class="card-row-icon">🚗</div>
+      <div class="card-row-body">
+        <div class="card-row-label">Blue Car Rental</div>
+        <div class="card-row-title">Pickup · KEF Airport</div>
+        <div class="card-row-sub">Jun 18 → Jun 22 · Dropoff by 8:00am</div>
+        <span class="tag tag-confirmed">Confirmed</span>
+        <div class="conf-block">
+          <span class="conf-num">0ROB4R</span>
+          <button class="copy-btn" onclick="copyText('0ROB4R',this)">Copy</button>
+        </div>
+        <div class="action-row">
+          <a class="action-btn" href="tel:+3545225522">
+            <span class="action-btn-icon">📞</span> Call Blue Car
+          </a>
+          <a class="action-btn" href="https://www.bluecarrental.is" target="_blank">
+            <span class="action-btn-icon">🔗</span> Website
+          </a>
+        </div>
+        <div class="card-row-sub" style="margin-top:8px;">76,673 ISK (~$560)</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Hotels & Stays -->
+<div class="section">
+  <div class="section-label">Hotels &amp; Stays</div>
+  <div class="card">
+
+    <!-- Night 1: Reykjavík -->
+    <div class="card-row">
+      <div class="card-row-icon">🏨</div>
+      <div class="card-row-body">
+        <div class="card-row-label">Night 1 · Thu Jun 18</div>
+        <div class="card-row-title">Reykjavík Residence Apt Hotel</div>
+        <div class="card-row-sub">No on-site parking — paid lot ~1 block away, ~€4/hr (free after 6pm weekdays)</div>
+        <span class="tag tag-confirmed">Confirmed</span>
+        <div class="conf-block">
+          <span class="conf-num">RKMZF4163366</span>
+          <button class="copy-btn" onclick="copyText('RKMZF4163366',this)">Copy</button>
+        </div>
+        <div class="action-row">
+          <a class="action-btn" href="https://maps.google.com/?q=Reykjavik+Residence+Apartment+Hotel" target="_blank">
+            <span class="action-btn-icon">📍</span> Maps
+          </a>
+          <a class="action-btn" href="https://www.reykjavikresidence.com" target="_blank">
+            <span class="action-btn-icon">🔗</span> Website
+          </a>
+        </div>
+        <div class="card-row-sub" style="margin-top:8px;">€340.46 (~$375)</div>
+      </div>
+    </div>
+
+    <!-- Night 2: Harmony Seljalandsfoss -->
+    <div class="card-row">
+      <div class="card-row-icon">🏡</div>
+      <div class="card-row-body">
+        <div class="card-row-label">Night 2 · Fri Jun 19 · Jake &amp; Bella</div>
+        <div class="card-row-title">Lilja Lodge — Harmony Seljalandsfoss</div>
+        <div class="card-row-sub">Private hot tub &amp; sauna · Check-in 4pm</div>
+        <span class="tag tag-confirmed">Confirmed</span>
+        <div class="conf-block">
+          <span class="conf-num">RFPZG4163390</span>
+          <button class="copy-btn" onclick="copyText('RFPZG4163390',this)">Copy</button>
+        </div>
+        <div class="action-row">
+          <a class="action-btn" href="https://maps.google.com/?q=Harmony+Seljalandsfoss+Iceland" target="_blank">
+            <span class="action-btn-icon">📍</span> Maps
+          </a>
+          <a class="action-btn" href="https://www.harmonyretreatlodge.com" target="_blank">
+            <span class="action-btn-icon">🔗</span> Website
+          </a>
+        </div>
+        <div class="card-row-sub" style="margin-top:8px;">€805.50 (~$886)</div>
+      </div>
+    </div>
+
+    <!-- Night 2: Georg Lodge -->
+    <div class="card-row">
+      <div class="card-row-icon">🏡</div>
+      <div class="card-row-body">
+        <div class="card-row-label">Night 2 · Fri Jun 19 · Chase &amp; Caroline</div>
+        <div class="card-row-title">Georg Lodge — Harmony Seljalandsfoss</div>
+        <div class="card-row-sub">Same property as Lilja · Check-in 4pm</div>
+        <span class="tag tag-confirmed">Confirmed</span>
+        <div class="action-row">
+          <a class="action-btn" href="https://maps.google.com/?q=Harmony+Seljalandsfoss+Iceland" target="_blank">
+            <span class="action-btn-icon">📍</span> Maps
+          </a>
+        </div>
+        <div class="card-row-sub" style="margin-top:8px;">~€805.50</div>
+      </div>
+    </div>
+
+    <!-- Night 3: Solheimahjáleiga -->
+    <div class="card-row">
+      <div class="card-row-icon">🏕️</div>
+      <div class="card-row-body">
+        <div class="card-row-label">Night 3 · Sat Jun 20</div>
+        <div class="card-row-title">Solheimahjáleiga Guesthouse</div>
+        <div class="card-row-sub">Farm stay · Breakfast included · Free parking · Check-in 3pm</div>
+        <div class="card-row-sub">Twin + triple room · DC-3 wreck &amp; glacier nearby</div>
+        <span class="tag tag-confirmed">Confirmed</span>
+        <span class="tag tag-pending">Free Cancel Before Jun 18</span>
+        <div class="conf-block">
+          <span class="conf-num">H-297945</span>
+          <button class="copy-btn" onclick="copyText('H-297945',this)">Copy</button>
+        </div>
+        <div class="action-row">
+          <a class="action-btn" href="https://maps.google.com/?q=Solheimahjaleiga+Guesthouse+Iceland" target="_blank">
+            <span class="action-btn-icon">📍</span> Maps
+          </a>
+          <a class="action-btn" href="https://www.solheimahjaleiga.is" target="_blank">
+            <span class="action-btn-icon">🔗</span> Website
+          </a>
+        </div>
+        <div class="card-row-sub" style="margin-top:8px;">$626</div>
+      </div>
+    </div>
+
+    <!-- Night 4: Reykjavík -->
+    <div class="card-row">
+      <div class="card-row-icon">🏨</div>
+      <div class="card-row-body">
+        <div class="card-row-label">Night 4 · Sun Jun 21</div>
+        <div class="card-row-title">Reykjavík — TBD</div>
+        <div class="card-row-sub">Final night before Monday flight · Book soon</div>
+        <span class="tag tag-urgent">Not Booked</span>
+        <div class="action-row">
+          <a class="action-btn" href="https://www.booking.com/searchresults.html?ss=Reykjavik&checkin=2026-06-21&checkout=2026-06-22" target="_blank">
+            <span class="action-btn-icon">🔍</span> Search Booking.com
+          </a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Dining -->
+<div class="section">
+  <div class="section-label">Dining</div>
+  <div class="card">
+
+    <div class="card-row">
+      <div class="card-row-icon">🍽️</div>
+      <div class="card-row-body">
+        <div class="card-row-label">Thu Jun 18 · Night 1</div>
+        <div class="card-row-title">Dinner in Reykjavík</div>
+        <div class="card-row-sub">Dill / OX / Matur og Drykkur — book in advance</div>
+        <span class="tag tag-urgent">Not Booked</span>
+        <div class="action-row">
+          <a class="action-btn" href="https://maps.google.com/?q=Dill+Restaurant+Reykjavik" target="_blank">
+            <span class="action-btn-icon">📍</span> Dill
+          </a>
+          <a class="action-btn" href="https://maps.google.com/?q=OX+Restaurant+Reykjavik" target="_blank">
+            <span class="action-btn-icon">📍</span> OX
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-row">
+      <div class="card-row-icon">🥂</div>
+      <div class="card-row-body">
+        <div class="card-row-label">Fri Jun 19 · Proposal Dinner</div>
+        <div class="card-row-title">Hotel Rangá Restaurant</div>
+        <div class="card-row-sub">Table for 4 · ~15 min from Harmony Lodge · Open to non-guests · 6:30–10pm</div>
+        <span class="tag tag-urgent">Not Booked</span>
+        <div class="action-row">
+          <a class="action-btn" href="https://www.hotelranga.is/rangarestaurant" target="_blank">
+            <span class="action-btn-icon">🔗</span> Reserve Online
+          </a>
+          <a class="action-btn" href="tel:+3548741700">
+            <span class="action-btn-icon">📞</span> Call Rangá
+          </a>
+          <a class="action-btn" href="https://maps.google.com/?q=Hotel+Rang%C3%A1+Iceland" target="_blank">
+            <span class="action-btn-icon">📍</span> Maps
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-row">
+      <div class="card-row-icon">🍖</div>
+      <div class="card-row-body">
+        <div class="card-row-label">Sat Jun 20 · Night 3</div>
+        <div class="card-row-title">Solheimahjáleiga On-Site</div>
+        <div class="card-row-sub">Lamb &amp; Arctic char — well reviewed. Included with stay.</div>
+        <span class="tag tag-confirmed">Included</span>
+      </div>
+    </div>
+
+    <div class="card-row">
+      <div class="card-row-icon">🦞</div>
+      <div class="card-row-body">
+        <div class="card-row-label">Sun Jun 21 · Option</div>
+        <div class="card-row-title">Fjöruborðið</div>
+        <div class="card-row-sub">Famous langoustine in Stokkseyri — on route back to Reykjavík</div>
+        <span class="tag tag-pending">Optional</span>
+        <div class="action-row">
+          <a class="action-btn" href="https://maps.google.com/?q=Fjöruborðið+Stokkseyri" target="_blank">
+            <span class="action-btn-icon">📍</span> Maps
+          </a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Activities to Book -->
+<div class="section">
+  <div class="section-label">Activities to Book</div>
+  <div class="card">
+    <div class="card-row">
+      <div class="card-row-icon">🐦</div>
+      <div class="card-row-body">
+        <div class="card-row-label">Sat Jun 20</div>
+        <div class="card-row-title">Ingólfshöfði Puffin Tour</div>
+        <div class="card-row-sub">Tractor wagon to headland — best puffin experience in Iceland. June = peak season. Book in advance.</div>
+        <span class="tag tag-urgent">Book Soon</span>
+        <div class="action-row">
+          <a class="action-btn" href="https://www.ingolfshofdi.com" target="_blank">
+            <span class="action-btn-icon">🔗</span> Book Online
+          </a>
+          <a class="action-btn" href="https://maps.google.com/?q=Ingolfshofdi+Iceland" target="_blank">
+            <span class="action-btn-icon">📍</span> Maps
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Spend Summary -->
+<div class="section">
+  <div class="section-label">Spend Summary</div>
+  <div class="card">
+    <div class="card-row">
+      <div class="card-row-icon">💰</div>
+      <div class="card-row-body">
+        <div class="card-row-title" style="margin-bottom:10px;">Confirmed</div>
+        <div style="display:flex; justify-content:space-between; font-size:13px; color:#aaa; margin-bottom:6px;">
+          <span>Flights (Delta)</span><span>$1,303</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; font-size:13px; color:#aaa; margin-bottom:6px;">
+          <span>Rental Car (Blue Car)</span><span>~$560</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; font-size:13px; color:#aaa; margin-bottom:6px;">
+          <span>Reykjavík Residence (Thu)</span><span>~$375</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; font-size:13px; color:#aaa; margin-bottom:6px;">
+          <span>Lilja Lodge / Harmony (Fri)</span><span>~$886</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; font-size:13px; color:#aaa; margin-bottom:6px;">
+          <span>Georg Lodge / Harmony (Fri)</span><span>~$886</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; font-size:13px; color:#aaa; margin-bottom:10px;">
+          <span>Solheimahjáleiga (Sat)</span><span>$626</span>
+        </div>
+        <div style="height:1px; background:#2a2a2a; margin-bottom:10px;"></div>
+        <div style="display:flex; justify-content:space-between; font-size:15px; font-weight:700; color:#f0f0f0;">
+          <span>Total Confirmed</span><span>~$4,636+</span>
+        </div>
+        <div style="font-size:12px; color:#555; margin-top:4px;">Excludes Sunday hotel, meals, activities</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Key Contacts -->
+<div class="section">
+  <div class="section-label">Key Contacts</div>
+  <div class="card">
+    <div class="card-row">
+      <div class="card-row-icon">🏡</div>
+      <div class="card-row-body">
+        <div class="card-row-title">Harmony Seljalandsfoss</div>
+        <div class="action-row">
+          <a class="action-btn" href="https://www.harmonyretreatlodge.com" target="_blank">
+            <span class="action-btn-icon">🔗</span> harmonyretreatlodge.com
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="card-row">
+      <div class="card-row-icon">🥂</div>
+      <div class="card-row-body">
+        <div class="card-row-title">Hotel Rangá</div>
+        <div class="action-row">
+          <a class="action-btn" href="tel:+3548741700">
+            <span class="action-btn-icon">📞</span> +354 874 1700
+          </a>
+          <a class="action-btn" href="https://www.hotelranga.is/rangarestaurant" target="_blank">
+            <span class="action-btn-icon">🔗</span> Website
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="card-row">
+      <div class="card-row-icon">🏕️</div>
+      <div class="card-row-body">
+        <div class="card-row-title">Solheimahjáleiga</div>
+        <div class="action-row">
+          <a class="action-btn" href="https://www.solheimahjaleiga.is" target="_blank">
+            <span class="action-btn-icon">🔗</span> solheimahjaleiga.is
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="card-row">
+      <div class="card-row-icon">🚗</div>
+      <div class="card-row-body">
+        <div class="card-row-title">Blue Car Rental</div>
+        <div class="action-row">
+          <a class="action-btn" href="tel:+3545225522">
+            <span class="action-btn-icon">📞</span> +354 522 5522
+          </a>
+          <a class="action-btn" href="https://www.bluecarrental.is" target="_blank">
+            <span class="action-btn-icon">🔗</span> bluecarrental.is
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="card-row">
+      <div class="card-row-icon">🚑</div>
+      <div class="card-row-body">
+        <div class="card-row-title">Emergency · Iceland</div>
+        <div class="action-row">
+          <a class="action-btn" href="tel:112">
+            <span class="action-btn-icon">🆘</span> 112
+          </a>
+          <a class="action-btn" href="tel:+3544444000">
+            <span class="action-btn-icon">📞</span> Non-emergency: +354 444 4000
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Apps & Logistics -->
+<div class="section">
+  <div class="section-label">Apps &amp; Logistics</div>
+  <div class="card">
+    <div class="card-row">
+      <div class="card-row-icon">💳</div>
+      <div class="card-row-body">
+        <div class="card-row-title">Currency</div>
+        <div class="card-row-sub">Cards accepted everywhere in Iceland. Notify bank before travel. 1 USD ≈ 137 ISK.</div>
+      </div>
+    </div>
+    <div class="card-row">
+      <div class="card-row-icon">📡</div>
+      <div class="card-row-body">
+        <div class="card-row-title">Connectivity</div>
+        <div class="card-row-sub">Most of Iceland has good LTE. Remote highlands may have gaps. Download offline maps before leaving Reykjavík.</div>
+        <div class="action-row">
+          <a class="action-btn" href="https://maps.apple.com" target="_blank">
+            <span class="action-btn-icon">🗺️</span> Apple Maps
+          </a>
+          <a class="action-btn" href="https://maps.google.com" target="_blank">
+            <span class="action-btn-icon">🗺️</span> Google Maps
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="card-row">
+      <div class="card-row-icon">🌤️</div>
+      <div class="card-row-body">
+        <div class="card-row-title">Icelandic Weather</div>
+        <div class="card-row-sub">Official weather service. June = mild (8–13°C / 46–55°F), long days (~24hr light). Pack layers.</div>
+        <div class="action-row">
+          <a class="action-btn" href="https://en.vedur.is" target="_blank">
+            <span class="action-btn-icon">🔗</span> vedur.is
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="card-row">
+      <div class="card-row-icon">🛣️</div>
+      <div class="card-row-body">
+        <div class="card-row-title">Road Conditions</div>
+        <div class="card-row-sub">Check road.is for closures (F-roads, gravel routes). Rental car does NOT cover F-roads.</div>
+        <div class="action-row">
+          <a class="action-btn" href="https://www.road.is" target="_blank">
+            <span class="action-btn-icon">🔗</span> road.is
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="card-row">
+      <div class="card-row-icon">⏰</div>
+      <div class="card-row-body">
+        <div class="card-row-title">Time Zone</div>
+        <div class="card-row-sub">Iceland = UTC+0 (no daylight saving). In June, NYC (EDT) = UTC−4, so Iceland is 4 hrs ahead of New York.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function copyText(text, btn) {
+  navigator.clipboard.writeText(text).then(function() {
+    var orig = btn.textContent;
+    btn.textContent = 'Copied!';
+    btn.style.color = '#34c759';
+    setTimeout(function() {
+      btn.textContent = orig;
+      btn.style.color = '';
+    }, 1500);
+  }).catch(function() {
+    // Fallback for older browsers
+    var ta = document.createElement('textarea');
+    ta.value = text;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    var orig = btn.textContent;
+    btn.textContent = 'Copied!';
+    btn.style.color = '#34c759';
+    setTimeout(function() {
+      btn.textContent = orig;
+      btn.style.color = '';
+    }, 1500);
+  });
+}
+</script>
+
+</body>
+</html>

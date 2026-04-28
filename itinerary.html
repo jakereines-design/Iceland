@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0f0f0f">
+<title>Itinerary — Iceland 2026</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+body {
+  background: #0f0f0f;
+  color: #f0f0f0;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', sans-serif;
+  min-height: 100vh;
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: calc(env(safe-area-inset-bottom) + 32px);
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+/* ── Topbar ── */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(15,15,15,0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid #1e1e1e;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-top: max(12px, env(safe-area-inset-top));
+}
+.topbar-back {
+  font-size: 15px;
+  color: #007aff;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+.topbar-title {
+  font-size: 17px;
+  font-weight: 600;
+  color: #f0f0f0;
+  flex: 1;
+  text-align: center;
+}
+.topbar-spacer { width: 48px; flex-shrink: 0; }
+
+/* ── Day cards ── */
+.days { padding: 20px 16px; display: flex; flex-direction: column; gap: 14px; }
+
+.day-card {
+  background: #1a1a1a;
+  border: 1px solid #2a2a2a;
+  border-radius: 18px;
+  overflow: hidden;
+}
+
+.day-header {
+  display: flex;
+  align-items: center;
+  padding: 16px 18px;
+  cursor: pointer;
+  gap: 12px;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 0.15s;
+  border-left: 4px solid transparent;
+}
+.day-header:active { background: #222; }
+
+/* Color coding per destination */
+.day-header.reykjavik { border-left-color: #007aff; }
+.day-header.proposal  { border-left-color: #bf5af2; }
+.day-header.south     { border-left-color: #ff9f0a; }
+.day-header.golden    { border-left-color: #34c759; }
+.day-header.departure { border-left-color: #555; }
+
+.day-header-left { flex: 1; }
+.day-num {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: #555;
+  margin-bottom: 3px;
+}
+.day-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: #f0f0f0;
+  margin-bottom: 2px;
+}
+.day-subtitle {
+  font-size: 13px;
+  color: #666;
+}
+.day-chevron {
+  font-size: 14px;
+  color: #444;
+  transition: transform 0.2s;
+  flex-shrink: 0;
+}
+.day-card.open .day-chevron { transform: rotate(90deg); }
+
+.day-body {
+  display: none;
+  border-top: 1px solid #222;
+}
+.day-card.open .day-body { display: block; }
+
+/* ── Timeline items ── */
+.timeline { padding: 4px 18px 16px; }
+
+.tl-item {
+  display: flex;
+  gap: 12px;
+  padding: 10px 0;
+  position: relative;
+}
+.tl-item:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  left: 13px;
+  top: 28px;
+  bottom: -2px;
+  width: 1px;
+  background: #2a2a2a;
+}
+.tl-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #2a2a2a;
+  border: 2px solid #444;
+  flex-shrink: 0;
+  margin-top: 3px;
+}
+.tl-dot.hotel    { background: #007aff; border-color: #007aff; }
+.tl-dot.proposal { background: #bf5af2; border-color: #bf5af2; }
+.tl-dot.activity { background: #34c759; border-color: #34c759; }
+.tl-dot.food     { background: #ff3b30; border-color: #ff3b30; }
+.tl-dot.drive    { background: #555; border-color: #555; }
+.tl-dot.flight   { background: #ff9f0a; border-color: #ff9f0a; }
+
+.tl-content { flex: 1; padding-top: 0; }
+.tl-time {
+  font-size: 11px;
+  color: #555;
+  letter-spacing: 0.5px;
+  margin-bottom: 2px;
+}
+.tl-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #f0f0f0;
+  margin-bottom: 2px;
+  line-height: 1.3;
+}
+.tl-detail {
+  font-size: 12px;
+  color: #777;
+  line-height: 1.4;
+}
+.tl-detail a {
+  color: #007aff;
+  text-decoration: none;
+}
+
+/* ── Tags ── */
+.tag {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.4px;
+  padding: 2px 7px;
+  border-radius: 20px;
+  margin-right: 5px;
+  margin-top: 4px;
+}
+.tag-confirmed { background: rgba(52,199,89,0.15); color: #34c759; }
+.tag-planned   { background: rgba(0,122,255,0.15); color: #007aff; }
+.tag-urgent    { background: rgba(255,59,48,0.15);  color: #ff3b30; }
+.tag-special   { background: rgba(191,90,242,0.15); color: #bf5af2; }
+
+/* ── Stay bar ── */
+.stay-bar {
+  background: #111;
+  border-top: 1px solid #222;
+  padding: 12px 18px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.stay-bar-icon { font-size: 16px; }
+.stay-bar-text { font-size: 12px; color: #777; flex: 1; }
+.stay-bar-text strong { color: #aaa; font-weight: 600; }
+.stay-bar-link {
+  font-size: 11px;
+  color: #007aff;
+  text-decoration: none;
+  padding: 4px 10px;
+  background: rgba(0,122,255,0.1);
+  border-radius: 8px;
+}
+.stay-bar-link:active { background: rgba(0,122,255,0.2); }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a class="topbar-back" href="index.html">← Home</a>
+  <div class="topbar-title">Itinerary</div>
+  <div class="topbar-spacer"></div>
+</div>
+
+<div class="days">
+
+  <!-- ── Day 1: Reykjavík ── -->
+  <div class="day-card open" id="day1">
+    <div class="day-header reykjavik" onclick="toggleDay('day1')">
+      <div class="day-header-left">
+        <div class="day-num">Day 1 · Thursday, Jun 18</div>
+        <div class="day-title">Reykjavík</div>
+        <div class="day-subtitle">Arrive, explore the capital</div>
+      </div>
+      <div class="day-chevron">›</div>
+    </div>
+    <div class="day-body">
+      <div class="timeline">
+        <div class="tl-item">
+          <div class="tl-dot flight"></div>
+          <div class="tl-content">
+            <div class="tl-time">Morning</div>
+            <div class="tl-title">Land at KEF · Keflavík Airport</div>
+            <div class="tl-detail">Delta · Trip ID 1015286827<br>Pick up rental car — Blue Car Rental #0ROB4R</div>
+            <div><span class="tag tag-confirmed">Confirmed</span></div>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot drive"></div>
+          <div class="tl-content">
+            <div class="tl-time">~45 min drive</div>
+            <div class="tl-title">Drive KEF → Reykjavík</div>
+            <div class="tl-detail">~50 km via Route 41</div>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot hotel"></div>
+          <div class="tl-content">
+            <div class="tl-time">Afternoon</div>
+            <div class="tl-title">Check in: Reykjavík Residence Apt Hotel</div>
+            <div class="tl-detail">Paid parking ~1 block away · ~€4/hr (free after 6pm weekdays)<br>Conf: RKMZF4163366</div>
+            <div><span class="tag tag-confirmed">Confirmed</span></div>
+            <div class="tl-detail" style="margin-top:4px;">
+              <a href="https://maps.google.com/?q=Reykjavik+Residence+Apartment+Hotel" target="_blank">📍 Google Maps</a>
+            </div>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot activity"></div>
+          <div class="tl-content">
+            <div class="tl-time">Afternoon / Evening</div>
+            <div class="tl-title">Explore Reykjavík</div>
+            <div class="tl-detail">Hallgrímskirkja church · Sun Voyager sculpture · Laugavegur shopping street</div>
+            <div><span class="tag tag-planned">Planned</span></div>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot food"></div>
+          <div class="tl-content">
+            <div class="tl-time">Evening</div>
+            <div class="tl-title">Dinner in Reykjavík</div>
+            <div class="tl-detail">Dill / OX / Matur og Drykkur — book in advance</div>
+            <div><span class="tag tag-urgent">Not Booked</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="stay-bar">
+        <div class="stay-bar-icon">🏨</div>
+        <div class="stay-bar-text"><strong>Reykjavík Residence</strong> · RKMZF4163366</div>
+        <a class="stay-bar-link" href="https://maps.google.com/?q=Reykjavik+Residence+Apartment+Hotel" target="_blank">Map</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Day 2: Proposal Day ── -->
+  <div class="day-card" id="day2">
+    <div class="day-header proposal" onclick="toggleDay('day2')">
+      <div class="day-header-left">
+        <div class="day-num">Day 2 · Friday, Jun 19</div>
+        <div class="day-title">💍 Proposal Day</div>
+        <div class="day-subtitle">Seljalandsfoss · Nauthúsagil · Harmony</div>
+      </div>
+      <div class="day-chevron">›</div>
+    </div>
+    <div class="day-body">
+      <div class="timeline">
+        <div class="tl-item">
+          <div class="tl-dot drive"></div>
+          <div class="tl-content">
+            <div class="tl-time">Morning · ~2 hr drive</div>
+            <div class="tl-title">Drive Reykjavík → Seljalandsfoss Area</div>
+            <div class="tl-detail">~150 km southeast via Ring Road 1</div>
+            <div><span class="tag tag-planned">Planned</span></div>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot activity"></div>
+          <div class="tl-content">
+            <div class="tl-time">Mid-Morning</div>
+            <div class="tl-title">Seljalandsfoss Waterfall</div>
+            <div class="tl-detail">Walk behind the waterfall · Easy trail<br>
+              <a href="https://maps.google.com/?q=Seljalandsfoss+waterfall+Iceland" target="_blank">📍 Google Maps</a>
+            </div>
+            <div><span class="tag tag-planned">Planned</span></div>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot proposal"></div>
+          <div class="tl-content">
+            <div class="tl-time">Late Morning</div>
+            <div class="tl-title">💍 Nauthúsagil Ravine — Proposal Spot</div>
+            <div class="tl-detail">Hidden moss gorge · 15 min east of Seljalandsfoss on Rt 249 · Wade up stream to a waterfall inside · Almost nobody goes here. Go early for maximum privacy.<br><br>
+              <a href="https://maps.google.com/?q=Nauthusagil+Iceland" target="_blank">📍 Google Maps</a>
+            </div>
+            <div><span class="tag tag-special">💍 Proposal</span><span class="tag tag-planned">Planned</span></div>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot activity"></div>
+          <div class="tl-content">
+            <div class="tl-time">Midday (Optional)</div>
+            <div class="tl-title">Gljúfrabúi Canyon Waterfall</div>
+            <div class="tl-detail">Hidden canyon next to Seljalandsfoss — wade in through the slot. Backup proposal spot if needed.<br>
+              <a href="https://maps.google.com/?q=Gljufrabui+waterfall+Iceland" target="_blank">📍 Google Maps</a>
+            </div>
+            <div><span class="tag tag-planned">Planned</span></div>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot hotel"></div>
+          <div class="tl-content">
+            <div class="tl-time">4:00pm · Check-in</div>
+            <div class="tl-title">Lilja Lodge — Harmony Seljalandsfoss</div>
+            <div class="tl-detail">Private hot tub &amp; sauna · Jake &amp; Bella<br>Georg Lodge: Chase &amp; Caroline (same property)<br>Conf: RFPZG4163390<br>
+              <a href="https://maps.google.com/?q=Harmony+Seljalandsfoss+Iceland" target="_blank">📍 Google Maps</a>
+            </div>
+            <div><span class="tag tag-confirmed">Confirmed</span></div>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot food"></div>
+          <div class="tl-content">
+            <div class="tl-time">Evening · 6:30pm</div>
+            <div class="tl-title">Dinner — Hotel Rangá</div>
+            <div class="tl-detail">~15 min from lodge · Table for 4 with Chase &amp; Caroline · Open to non-guests · 6:30–10pm<br>
+              <a href="https://www.hotelranga.is/rangarestaurant" target="_blank">🔗 Reserve</a> · <a href="https://maps.google.com/?q=Hotel+Ranga+Iceland" target="_blank">📍 Maps</a>
+            </div>
+            <div><span class="tag tag-urgent">Not Booked</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="stay-bar">
+        <div class="stay-bar-icon">🏡</div>
+        <div class="stay-bar-text"><strong>Lilja Lodge / Harmony</strong> · RFPZG4163390</div>
+        <a class="stay-bar-link" href="https://maps.google.com/?q=Harmony+Seljalandsfoss+Iceland" target="_blank">Map</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Day 3: South Coast ── -->
+  <div class="day-card" id="day3">
+    <div class="day-header south" onclick="toggleDay('day3')">
+      <div class="day-header-left">
+        <div class="day-num">Day 3 · Saturday, Jun 20</div>
+        <div class="day-title">South Coast</div>
+        <div class="day-subtitle">Skógafoss · Reynisfjara · Puffins</div>
+      </div>
+      <div class="day-chevron">›</div>
+    </div>
+    <div class="day-body">
+      <div class="timeline">
+        <div class="tl-item">
+          <div class="tl-dot activity"></div>
+          <div class="tl-content">
+            <div class="tl-time">Morning</div>
+            <div class="tl-title">Skógafoss Waterfall</div>
+            <div class="tl-detail">60m waterfall · ~30 min east of Harmony Lodge · Climb the stairs for views · Rainbow on sunny mornings<br>
+              <a href="https://maps.google.com/?q=Skogafoss+waterfall+Iceland" target="_blank">📍 Google Maps</a>
+            </div>
+            <div><span class="tag tag-planned">Planned</span></div>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot activity"></div>
+          <div class="tl-content">
+            <div class="tl-time">Mid-Morning</div>
+            <div class="tl-title">Reynisfjara Black Sand Beach</div>
+            <div class="tl-detail">Basalt columns · Cave · Dangerous sneaker waves — stay back from waterline<br>
+              <a href="https://maps.google.com/?q=Reynisfjara+black+sand+beach" target="_blank">📍 Google Maps</a>
+            </div>
+            <div><span class="tag tag-planned">Planned</span></div>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot activity"></div>
+          <div class="tl-content">
+            <div class="tl-time">Midday</div>
+            <div class="tl-title">Dyrhólaey Sea Arch</div>
+            <div class="tl-detail">Sea arch · Puffin cliffs · June = peak nesting season · Stunning panorama<br>
+              <a href="https://maps.google.com/?q=Dyrholaey+Iceland" target="_blank">📍 Google Maps</a>
+            </div>
+            <div><span class="tag tag-planned">Planned</span></div>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot activity"></div>
+          <div class="tl-content">
+            <div class="tl-time">Afternoon</div>
+            <div class="tl-title">🐦 Ingólfshöfði Puffin Tour</div>
+            <div class="tl-detail">Tractor wagon to remote headland — best puffin experience in Iceland. June = peak season. Book guided tour in advance.<br>
+              <a href="https://www.ingolfshofdi.com" target="_blank">🔗 Book Now</a> · <a href="https://maps.google.com/?q=Ingolfshofdi+Iceland" target="_blank">📍 Maps</a>
+            </div>
+            <div><span class="tag tag-urgent">Book in Advance</span></div>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot hotel"></div>
+          <div class="tl-content">
+            <div class="tl-time">3:00pm · Check-in</div>
+            <div class="tl-title">Solheimahjáleiga Guesthouse</div>
+            <div class="tl-detail">Breakfast included · Free parking · Twin + triple room<br>DC-3 plane wreck accessible from property · Sólheimajökull glacier nearby<br>Conf: H-297945 · Free cancel before Jun 18<br>
+              <a href="https://maps.google.com/?q=Solheimahjaleiga+Guesthouse+Iceland" target="_blank">📍 Google Maps</a>
+            </div>
+            <div><span class="tag tag-confirmed">Confirmed</span></div>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot activity"></div>
+          <div class="tl-content">
+            <div class="tl-time">Late Afternoon (Optional)</div>
+            <div class="tl-title">DC-3 Plane Wreck</div>
+            <div class="tl-detail">Accessible on foot from the guesthouse · Famous for photography · ~1 hr round trip<br>
+              <a href="https://maps.google.com/?q=DC3+plane+wreck+Iceland" target="_blank">📍 Google Maps</a>
+            </div>
+            <div><span class="tag tag-planned">Planned</span></div>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot food"></div>
+          <div class="tl-content">
+            <div class="tl-time">Evening</div>
+            <div class="tl-title">Dinner at Solheimahjáleiga</div>
+            <div class="tl-detail">On-site restaurant · Lamb &amp; Arctic char well reviewed</div>
+            <div><span class="tag tag-confirmed">Included</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="stay-bar">
+        <div class="stay-bar-icon">🏕️</div>
+        <div class="stay-bar-text"><strong>Solheimahjáleiga</strong> · H-297945</div>
+        <a class="stay-bar-link" href="https://maps.google.com/?q=Solheimahjaleiga+Guesthouse+Iceland" target="_blank">Map</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Day 4: Golden Circle ── -->
+  <div class="day-card" id="day4">
+    <div class="day-header golden" onclick="toggleDay('day4')">
+      <div class="day-header-left">
+        <div class="day-num">Day 4 · Sunday, Jun 21</div>
+        <div class="day-title">Golden Circle</div>
+        <div class="day-subtitle">Þingvellir · Geysir · Gullfoss</div>
+      </div>
+      <div class="day-chevron">›</div>
+    </div>
+    <div class="day-body">
+      <div class="timeline">
+        <div class="tl-item">
+          <div class="tl-dot drive"></div>
+          <div class="tl-content">
+            <div class="tl-time">10:00am · Depart</div>
+            <div class="tl-title">Drive to Þingvellir</div>
+            <div class="tl-detail">~2.5 hrs northwest from Vík area · Leave by 10am for best timing</div>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot activity"></div>
+          <div class="tl-content">
+            <div class="tl-time">Midday</div>
+            <div class="tl-title">Þingvellir National Park</div>
+            <div class="tl-detail">UNESCO World Heritage Site · Walk between North American &amp; Eurasian tectonic plates · Historic Viking parliament site<br>
+              <a href="https://maps.google.com/?q=Thingvellir+National+Park+Iceland" target="_blank">📍 Google Maps</a>
+            </div>
+            <div><span class="tag tag-planned">Planned</span></div>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot activity"></div>
+          <div class="tl-content">
+            <div class="tl-time">Early Afternoon</div>
+            <div class="tl-title">Strokkur Geysir</div>
+            <div class="tl-detail">Erupts every 5–10 minutes · 30m plume · Geysir geothermal area<br>
+              <a href="https://maps.google.com/?q=Strokkur+Geysir+Iceland" target="_blank">📍 Google Maps</a>
+            </div>
+            <div><span class="tag tag-planned">Planned</span></div>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot activity"></div>
+          <div class="tl-content">
+            <div class="tl-time">Afternoon</div>
+            <div class="tl-title">Gullfoss Waterfall</div>
+            <div class="tl-detail">Two-tiered canyon waterfall · One of Iceland's most iconic sights<br>
+              <a href="https://maps.google.com/?q=Gullfoss+waterfall+Iceland" target="_blank">📍 Google Maps</a>
+            </div>
+            <div><span class="tag tag-planned">Planned</span></div>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot food"></div>
+          <div class="tl-content">
+            <div class="tl-time">En Route (Optional)</div>
+            <div class="tl-title">Fjöruborðið — Langoustine</div>
+            <div class="tl-detail">Famous langoustine restaurant in Stokkseyri · On route back toward Reykjavík<br>
+              <a href="https://maps.google.com/?q=Fjöruborðið+Stokkseyri+Iceland" target="_blank">📍 Google Maps</a>
+            </div>
+            <div><span class="tag tag-planned">Optional</span></div>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot hotel"></div>
+          <div class="tl-content">
+            <div class="tl-time">Evening</div>
+            <div class="tl-title">Back to Reykjavík · Hotel TBD</div>
+            <div class="tl-detail">Final night before flight home</div>
+            <div><span class="tag tag-urgent">Not Booked</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="stay-bar">
+        <div class="stay-bar-icon">🏨</div>
+        <div class="stay-bar-text"><strong>Reykjavík Hotel TBD</strong> · Book soon</div>
+        <a class="stay-bar-link" href="https://www.booking.com/searchresults.html?ss=Reykjavik&checkin=2026-06-21&checkout=2026-06-22" target="_blank">Search</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Day 5: Fly Home ── -->
+  <div class="day-card" id="day5">
+    <div class="day-header departure" onclick="toggleDay('day5')">
+      <div class="day-header-left">
+        <div class="day-num">Day 5 · Monday, Jun 22</div>
+        <div class="day-title">Fly Home</div>
+        <div class="day-subtitle">KEF → NYC · Car dropoff by 8am</div>
+      </div>
+      <div class="day-chevron">›</div>
+    </div>
+    <div class="day-body">
+      <div class="timeline">
+        <div class="tl-item">
+          <div class="tl-dot drive"></div>
+          <div class="tl-content">
+            <div class="tl-time">Early Morning</div>
+            <div class="tl-title">Drive to KEF Airport</div>
+            <div class="tl-detail">~45 min from Reykjavík · Return rental car by 8:00am · Blue Car Rental #0ROB4R</div>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot flight"></div>
+          <div class="tl-content">
+            <div class="tl-time">Departure</div>
+            <div class="tl-title">KEF → NYC · Delta</div>
+            <div class="tl-detail">Trip ID 1015286827<br>Check in online night before</div>
+            <div><span class="tag tag-confirmed">Confirmed</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function toggleDay(id) {
+  var card = document.getElementById(id);
+  card.classList.toggle('open');
+}
+</script>
+
+</body>
+</html>
