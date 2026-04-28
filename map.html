@@ -283,14 +283,14 @@ var PINS = {
     { type:'hotel',      name:'Georg Lodge · Harmony Seljalandsfoss', lat:63.6258, lon:-20.1840, detail:'Chase & Caroline · Check-in Fri Jun 19 · Same property', confirm:'Harmony Seljalandsfoss', addr:'Dílaflöt, 861 Hvolsvöllur, Iceland' },
     { type:'activity',   name:'Seljalandsfoss',   lat:63.6152, lon:-20.1537, detail:'Walk all the way behind this 60m waterfall — one of the most magical spots in Iceland', confirm:'', addr:'Seljalandsfoss, Iceland' },
     { type:'activity',   name:'Gljúfrabúi',       lat:63.6183, lon:-20.1000, detail:'Hidden waterfall inside a canyon — squeeze through the rocks to find it', confirm:'', addr:'Gljúfrabúi, Iceland' },
-    { type:'activity',   name:'Nauthúsagil Ravine', lat:63.6690, lon:-19.8580, detail:'Hidden moss gorge — wade up a shallow stream to the waterfall inside. Almost nobody goes here. Top proposal candidate.', confirm:'15 min east of Seljalandsfoss · Rt 249', addr:'Nauthúsagil, Iceland' },
+    { type:'activity',   name:'Nauthúsagil Ravine', lat:63.6690, lon:-19.8580, detail:'Hidden moss gorge — wade up a shallow stream to the waterfall inside. Almost nobody goes here.', confirm:'15 min east of Seljalandsfoss · Rt 249', addr:'Nauthúsagil, Iceland' },
     { type:'activity',   name:'Skógafoss',        lat:63.5320, lon:-19.5117, detail:'Iconic 60m waterfall — rainbows on sunny days. Stairs to the top for panoramic views.', confirm:'', addr:'Skógafoss, Iceland' },
     { type:'restaurant', name:'Hotel Rangá',      lat:63.8438, lon:-20.0782, detail:'Best restaurant on the south coast · Nordic cuisine · Lamb, reindeer, langoustine · Open to non-guests · Book table for 4', confirm:'6:30–10pm · $$$$', addr:'Rangá, Hella, Iceland' },
   ],
   vik: [
     { type:'hotel',      name:'Solheimahjáleiga Guesthouse', lat:63.5180, lon:-19.5650, detail:'Sat Jun 20 · Twin + triple room · Breakfast included · Free parking · DC-3 wreck on property', confirm:'Booking H-297945 · Check-in 3pm', addr:'Sólheimahjáleiga, Vík, Iceland' },
     { type:'activity',   name:'Reynisfjara Black Sand Beach', lat:63.4038, lon:-19.0441, detail:'Dramatic basalt columns, crashing Atlantic waves and puffin nesting cliffs in June', confirm:'', addr:'Reynisfjara, Vík, Iceland' },
-    { type:'activity',   name:'Dyrhólaey',        lat:63.4004, lon:-19.1299, detail:'Sea arch with puffins nesting all along the clifftops in June · Easy to get very close', confirm:'June = peak nesting 🐦', addr:'Dyrhólaey, Iceland' },
+    { type:'activity',   name:'Dyrhólaey 💍',     lat:63.4004, lon:-19.1299, detail:'Puffin cliffs with a sea arch and sweeping views · June = peak nesting · The proposal spot', confirm:'💍 Proposal · June = peak puffins 🐦', addr:'Dyrhólaey, Iceland' },
     { type:'activity',   name:'Ingólfshöfði',     lat:63.7970, lon:-18.0190, detail:'Tractor wagon ride to remote headland — thousands of puffins nest here in June · Book guided tour in advance', confirm:'Best puffin experience in Iceland 🐦', addr:'Ingólfshöfði, Iceland' },
     { type:'activity',   name:'DC-3 Plane Wreck', lat:63.4591, lon:-19.3638, detail:'Famous American military plane that crashed in 1973 · 4km hike across black sand or tractor tour from Solheimahjáleiga', confirm:'Accessible from your guesthouse', addr:'Sólheimasandur, Iceland' },
     { type:'activity',   name:'Vík Village',      lat:63.4190, lon:-19.0050, detail:"Iceland's southernmost village — great lunch stop with views of the iconic church on the hill", confirm:'', addr:'Vík, Iceland' },
@@ -336,16 +336,7 @@ function showCity(city) {
   document.getElementById('tab-' + city).classList.add('active');
   currentCity = city;
 
-  // Show/hide layers
-  Object.keys(layerGroups).forEach(function(k) {
-    if (k === city) {
-      layerGroups[k].addTo(map);
-    } else {
-      map.removeLayer(layerGroups[k]);
-    }
-  });
-
-  // Fly to city
+  // Fly to city — all pins always visible
   var v = CITY_VIEWS[city];
   map.flyTo(v.center, v.zoom, { duration: 1.0 });
   closeSheet();
@@ -394,7 +385,7 @@ window.onload = function() {
     pane: 'overlayPane'
   }).addTo(map);
 
-  // Build layer groups and markers
+  // Build layer groups and markers — all added to map immediately
   Object.keys(PINS).forEach(function(city) {
     layerGroups[city] = L.layerGroup();
     PINS[city].forEach(function(pin) {
@@ -403,9 +394,10 @@ window.onload = function() {
       marker.on('click', function() { openSheet(pin); });
       layerGroups[city].addLayer(marker);
     });
+    layerGroups[city].addTo(map);
   });
 
-  // Show initial city
+  // Set initial view to Reykjavík, all pins visible
   showCity('reykjavik');
 };
 </script>
