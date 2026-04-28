@@ -140,6 +140,29 @@ body {
   background: #2a2a2a;
   margin: 12px 0;
 }
+.currency-presets {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+.currency-preset {
+  flex: 1;
+  min-width: 0;
+  background: #111;
+  border: 1px solid #2a2a2a;
+  border-radius: 10px;
+  color: #007aff;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 8px 4px;
+  text-align: center;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 0.15s;
+}
+.currency-preset:active { background: #252525; }
+.currency-preset.clear-btn { color: #555; }
 
 /* ── Nav cards ── */
 .nav-grid {
@@ -283,12 +306,7 @@ body {
     <div class="countdown-sep">·</div>
     <div class="countdown-unit">
       <span class="countdown-num" id="cd-mins">--</span>
-      <div class="countdown-label">Mins</div>
-    </div>
-    <div class="countdown-sep">·</div>
-    <div class="countdown-unit">
-      <span class="countdown-num" id="cd-secs">--</span>
-      <div class="countdown-label">Secs</div>
+      <div class="countdown-label">Minutes</div>
     </div>
   </div>
 </div>
@@ -305,6 +323,13 @@ body {
     <div class="currency-row">
       <div class="currency-flag-label">🇺🇸 USD</div>
       <div class="currency-result" id="usd-result">—</div>
+    </div>
+    <div class="currency-presets">
+      <div class="currency-preset" onclick="setISK(1000)">1K ISK</div>
+      <div class="currency-preset" onclick="setISK(5000)">5K ISK</div>
+      <div class="currency-preset" onclick="setISK(10000)">10K ISK</div>
+      <div class="currency-preset" onclick="setISK(50000)">50K ISK</div>
+      <div class="currency-preset clear-btn" onclick="clearISK()">✕ Clear</div>
     </div>
     <div class="currency-rate" id="rate-label">Loading rate…</div>
   </div>
@@ -425,14 +450,12 @@ function tick() {
   var d = Math.floor(diff / 86400000);
   var h = Math.floor((diff % 86400000) / 3600000);
   var m = Math.floor((diff % 3600000) / 60000);
-  var s = Math.floor((diff % 60000) / 1000);
   document.getElementById('cd-days').textContent  = pad(d);
   document.getElementById('cd-hours').textContent = pad(h);
   document.getElementById('cd-mins').textContent  = pad(m);
-  document.getElementById('cd-secs').textContent  = pad(s);
 }
 tick();
-setInterval(tick, 1000);
+setInterval(tick, 60000);
 
 // ── Currency ──────────────────────────────────────
 var iskRate = 137;
@@ -455,6 +478,16 @@ function convertISK() {
   if (!isk || isNaN(isk)) { el.textContent = '—'; return; }
   var usd = isk / iskRate;
   el.textContent = '$' + usd.toFixed(2);
+}
+
+function setISK(val) {
+  document.getElementById('isk-input').value = val;
+  convertISK();
+}
+
+function clearISK() {
+  document.getElementById('isk-input').value = '';
+  document.getElementById('usd-result').textContent = '—';
 }
 </script>
 
