@@ -192,6 +192,46 @@ body {
 .tag-urgent    { background: rgba(255,59,48,0.15);  color: #ff3b30; }
 .tag-special   { background: rgba(191,90,242,0.15); color: #bf5af2; }
 
+/* ── Plan tabs ── */
+.plan-tabs {
+  display: flex;
+  gap: 8px;
+  padding: 12px 16px 0;
+}
+.plan-tab {
+  flex: 1;
+  text-align: center;
+  padding: 9px 0;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid #2a2a2a;
+  background: #1a1a1a;
+  color: #555;
+  transition: all 0.15s;
+  -webkit-tap-highlight-color: transparent;
+}
+.plan-tab.active {
+  background: #007aff;
+  border-color: #007aff;
+  color: #fff;
+}
+.plan-content { display: none; }
+.plan-content.active { display: block; }
+
+/* ── Plan B note ── */
+.planb-note {
+  margin: 0 16px 14px;
+  background: rgba(191,90,242,0.08);
+  border: 1px solid rgba(191,90,242,0.25);
+  border-radius: 12px;
+  padding: 10px 14px;
+  font-size: 12px;
+  color: #bf5af2;
+  line-height: 1.5;
+}
+
 /* ── Stay bar ── */
 .stay-bar {
   background: #111;
@@ -223,6 +263,13 @@ body {
   <div class="topbar-spacer"></div>
 </div>
 
+<div class="plan-tabs">
+  <div class="plan-tab active" onclick="switchPlan('a')">Plan A</div>
+  <div class="plan-tab" onclick="switchPlan('b')">Plan B</div>
+</div>
+
+<!-- ══ PLAN A ══ -->
+<div class="plan-content active" id="plan-a">
 <div class="days">
 
   <!-- ── Day 1: Reykjavík ── -->
@@ -599,11 +646,193 @@ body {
   </div>
 
 </div>
+</div> <!-- end plan-a days -->
+</div> <!-- end plan-a -->
+
+<!-- ══ PLAN B ══ -->
+<div class="plan-content" id="plan-b">
+<div class="days">
+
+  <div class="planb-note">
+    💡 Plan B moves the proposal to <strong>Thursday evening</strong> — a secluded picnic outside Reykjavík with the midnight sun. If Thursday doesn't work, <strong>Friday at Dyrhólaey is still the backup</strong>. Sunday swaps the Golden Circle for <strong>Fjaðrárgljúfur Canyon</strong> — Bella's pick.
+  </div>
+
+  <!-- ── Plan B · Day 1: Golden Circle + Proposal ── -->
+  <div class="day-card open" id="b-day1">
+    <div class="day-header proposal" onclick="toggleDay('b-day1')">
+      <div class="day-header-left">
+        <div class="day-num">Day 1 · Thursday, Jun 18</div>
+        <div class="day-title">💍 Golden Circle + Proposal</div>
+        <div class="day-subtitle">Brúarfoss · Geysir · Gullfoss · Reykjavík</div>
+      </div>
+      <div class="day-chevron">›</div>
+    </div>
+    <div class="day-body">
+      <div class="timeline">
+        <div class="tl-item">
+          <div class="tl-dot flight"></div>
+          <div class="tl-content">
+            <div class="tl-time">9:30am · Arrive</div>
+            <div class="tl-title">Land at KEF · Keflavík Airport</div>
+            <div class="tl-detail">Delta DL246 · Trip ID 1015286827<br>Pick up rental car — Blue Car Rental #0ROB4R</div>
+            <div><span class="tag tag-confirmed">Confirmed</span></div>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot drive"></div>
+          <div class="tl-content">
+            <div class="tl-time">~45 min drive</div>
+            <div class="tl-title">Drive KEF → Reykjavík</div>
+            <div class="tl-detail">Drop luggage · Request early check-in if possible</div>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot activity"></div>
+          <div class="tl-content">
+            <div class="tl-time">~12:00–3:00pm</div>
+            <div class="tl-title">Lunch + Nap</div>
+            <div class="tl-detail">Grab lunch in the city · Rest after overnight flight · Check in at 3pm · Reykjavík Residence · Conf: RKMZF4163366</div>
+            <div><span class="tag tag-confirmed">Confirmed</span></div>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot activity"></div>
+          <div class="tl-content">
+            <div class="tl-time">~5:00pm</div>
+            <div class="tl-title">Picnic Supply Run — Bónus</div>
+            <div class="tl-detail">Pick up wine, cheese, charcuterie, bread, fruit · Suggest picnic dinner to Bella using midnight sun as the reason · Decide on location together</div>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot drive"></div>
+          <div class="tl-content">
+            <div class="tl-time">~6:30pm</div>
+            <div class="tl-title">Drive to Picnic Spot</div>
+            <div class="tl-detail">Location TBD — Bella picks. Options:<br>
+              🌊 <strong>Hvalfjörður Fjord</strong> — hidden fjord road, 40 min, no tourists, fjord + mountain views<br>
+              💧 <strong>Þórufoss Waterfall</strong> — hidden waterfall, 30 min from city<br>
+              🌿 <strong>Mosfellsdalur Valley</strong> — quiet green valley, 20 min from city
+            </div>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot proposal"></div>
+          <div class="tl-content">
+            <div class="tl-time">~7:30–8:00pm</div>
+            <div class="tl-title">💍 Proposal — Midnight Sun Picnic</div>
+            <div class="tl-detail">Secluded spot · iPhone propped up · Golden hour light · Just the two of you</div>
+            <div><span class="tag tag-special">💍 Proposal</span></div>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot activity"></div>
+          <div class="tl-content">
+            <div class="tl-time">After proposal</div>
+            <div class="tl-title">🥂 Chase & Caroline Surprise</div>
+            <div class="tl-detail">They show up with champagne · Engagement photos together · Then all drive back to Reykjavík</div>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot food"></div>
+          <div class="tl-content">
+            <div class="tl-time">~10:00pm</div>
+            <div class="tl-title">Wine Bar in Reykjavík</div>
+            <div class="tl-detail">All four celebrate · Bars open until 1am · Midnight sun still up</div>
+            <div><span class="tag tag-planned">Planned</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="stay-bar">
+        <div class="stay-bar-icon">🏨</div>
+        <div class="stay-bar-text"><strong>Reykjavík Residence</strong> · RKMZF4163366</div>
+        <a class="stay-bar-link" href="https://maps.google.com/?q=Reykjavik+Residence+Apartment+Hotel" target="_blank">Map</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Plan B · Day 4: Fjaðrárgljúfur ── -->
+  <div class="day-card" id="b-day4">
+    <div class="day-header golden" onclick="toggleDay('b-day4')">
+      <div class="day-header-left">
+        <div class="day-num">Day 4 · Sunday, Jun 21</div>
+        <div class="day-title">Fjaðrárgljúfur Canyon</div>
+        <div class="day-subtitle">Bella's pick · Canyon · Reykjavík · Skál!</div>
+      </div>
+      <div class="day-chevron">›</div>
+    </div>
+    <div class="day-body">
+      <div class="timeline">
+        <div class="tl-item">
+          <div class="tl-dot drive"></div>
+          <div class="tl-content">
+            <div class="tl-time">8:30am · Depart</div>
+            <div class="tl-title">Drive East from Solheimahjáleiga</div>
+            <div class="tl-detail">~1.5 hrs east on Route 1 toward Kirkjubæjarklaustur</div>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot activity"></div>
+          <div class="tl-content">
+            <div class="tl-time">~10:00am</div>
+            <div class="tl-title">👀 Fjaðrárgljúfur Canyon</div>
+            <div class="tl-detail">Bella saved this on Instagram · 100m deep canyon rim walk · ~2km · Stunning river views below · Rocky but walkable · ~1.5–2 hrs<br>
+              <a href="https://maps.google.com/?q=Fjadrargljufur+Canyon+Iceland" target="_blank">📍 Google Maps</a>
+            </div>
+            <div><span class="tag tag-planned">Bella's Pick 👀</span></div>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot drive"></div>
+          <div class="tl-content">
+            <div class="tl-time">~12:00pm</div>
+            <div class="tl-title">Drive back toward Reykjavík</div>
+            <div class="tl-detail">~3.5 hrs west on Route 1 · Grab lunch on the way</div>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot hotel"></div>
+          <div class="tl-content">
+            <div class="tl-time">~4:00pm · Check-in</div>
+            <div class="tl-title">Hotel Reykjavík Saga</div>
+            <div class="tl-detail">Lækjargata 12 · Booking ID: 997168222<br>
+              <a href="https://maps.google.com/?q=Hotel+Reykjavik+Saga+Iceland" target="_blank">📍 Google Maps</a>
+            </div>
+            <div><span class="tag tag-confirmed">Confirmed · $460</span></div>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot food"></div>
+          <div class="tl-content">
+            <div class="tl-time">7:30pm</div>
+            <div class="tl-title">Dinner — Skál!</div>
+            <div class="tl-detail">Njálsgata 1, Reykjavík · Table for 4 · 7:30–9:30pm · Last night celebration 🥂<br>Conf: #8764830<br>
+              <a href="https://maps.google.com/?q=Skal+Restaurant+Njalsgata+Reykjavik" target="_blank">📍 Google Maps</a>
+            </div>
+            <div><span class="tag tag-confirmed">Confirmed</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="stay-bar">
+        <div class="stay-bar-icon">🏨</div>
+        <div class="stay-bar-text"><strong>Hotel Reykjavík Saga</strong> · 997168222</div>
+        <a class="stay-bar-link" href="https://maps.google.com/?q=Hotel+Reykjavik+Saga+Iceland" target="_blank">Map</a>
+      </div>
+    </div>
+  </div>
+
+</div>
+</div> <!-- end plan-b -->
 
 <script>
 function toggleDay(id) {
   var card = document.getElementById(id);
   card.classList.toggle('open');
+}
+function switchPlan(plan) {
+  document.querySelectorAll('.plan-tab').forEach(function(t) { t.classList.remove('active'); });
+  document.querySelectorAll('.plan-content').forEach(function(c) { c.classList.remove('active'); });
+  document.getElementById('plan-' + plan).classList.add('active');
+  document.querySelectorAll('.plan-tab')[plan === 'a' ? 0 : 1].classList.add('active');
 }
 </script>
 
